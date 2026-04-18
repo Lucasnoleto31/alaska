@@ -25,12 +25,12 @@ export default function CandlestickDiagram() {
   const show = (minPhase) => phase >= minPhase
 
   return (
-    <div className="relative w-full overflow-x-auto -mx-2 px-2 md:mx-0 md:px-0">
+    <div className="relative w-full">
       {/* Botão Replay */}
       <button
         onClick={runAnimation}
         disabled={isAnimating}
-        className={`absolute top-0 right-0 md:top-2 md:right-2 z-20 flex items-center gap-1.5 px-2.5 py-1.5 md:px-3 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-xs font-semibold transition-all duration-300 ${
+        className={`absolute top-0 right-0 z-20 flex items-center gap-1 px-2 py-1 md:px-3 md:py-2 rounded-lg md:rounded-xl text-[9px] md:text-xs font-semibold transition-all duration-300 ${
           isAnimating
             ? 'bg-white/[0.02] text-white/10 cursor-not-allowed'
             : 'bg-white/[0.04] text-white/40 hover:text-[#00ff87] hover:bg-[#00ff87]/5 cursor-pointer border border-white/[0.06] hover:border-[#00ff87]/20'
@@ -40,7 +40,7 @@ export default function CandlestickDiagram() {
         Replay
       </button>
 
-      <svg viewBox="0 0 800 520" className="w-full h-auto min-w-[600px]" style={{ maxHeight: '520px' }}>
+      <svg viewBox="0 0 800 520" className="w-full h-auto" style={{ maxHeight: '520px' }}>
         <defs>
           <filter id="glow-green">
             <feGaussianBlur stdDeviation="4" result="blur" />
@@ -237,7 +237,7 @@ export default function CandlestickDiagram() {
 
       {/* Tooltip flutuante */}
       {activeZone && (
-        <div className="absolute top-2 right-12 md:top-4 md:right-16 bg-[#0c0c10]/95 backdrop-blur-xl border border-white/[0.08] rounded-xl p-3 md:p-4 max-w-[200px] md:max-w-[240px] shadow-2xl shadow-black/60 pointer-events-none z-10">
+        <div className="absolute top-2 left-2 md:top-4 md:left-4 bg-[#0c0c10]/95 backdrop-blur-xl border border-white/[0.08] rounded-lg md:rounded-xl p-2.5 md:p-4 max-w-[170px] md:max-w-[240px] shadow-2xl shadow-black/60 pointer-events-none z-10">
           {activeZone === 'candle1' && (
             <>
               <p className="text-[#00ff87] text-[11px] md:text-xs font-bold mb-1">Vela de Sinal</p>
