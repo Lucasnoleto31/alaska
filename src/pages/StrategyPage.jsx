@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { Trophy, TrendingDown, Shield, Target, AlertTriangle, Zap, ArrowDown, ArrowRight, Users, Calculator } from 'lucide-react'
+import { Trophy, TrendingDown, Shield, Target, AlertTriangle, Zap, ArrowDown, ArrowRight, Users } from 'lucide-react'
 import CandlestickDiagram from '../components/CandlestickDiagram'
 
 function FlowStep({ number, icon: Icon, color, title, description, details }) {
@@ -64,110 +63,6 @@ function ScenarioCard({ title, subtitle, result, resultColor, items }) {
           <span className="text-lg md:text-xl font-black" style={{ color: resultColor }}>{result}</span>
         </div>
       </div>
-    </div>
-  )
-}
-
-function Simulator() {
-  const [lote, setLote] = useState(1)
-  const pointValue = 0.2 // valor do ponto por mini contrato
-
-  const alaskaGain = lote * 100 * pointValue
-  const squareGain = (lote * 120 * pointValue) + (lote * 3 * 120 * pointValue) // Alaska + Square juntos na média
-  const squareGainSimple = lote * 3 * 120 * pointValue // só o Square
-  const stopLoss = lote * 400 * pointValue
-
-  return (
-    <div className="relative overflow-hidden bg-white/[0.02] border border-white/[0.04] rounded-2xl p-4 md:p-8 mb-10 md:mb-16">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#00ff87]/[0.02] to-[#3b82f6]/[0.01] pointer-events-none" />
-
-      <div className="flex items-center gap-2 md:gap-3 mb-5 md:mb-8 relative">
-        <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-[#00ff87]/10 flex items-center justify-center">
-          <Calculator className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff87]" />
-        </div>
-        <div>
-          <span className="text-white font-semibold text-sm">Simulador de Ganhos</span>
-          <p className="text-white/20 text-[9px] md:text-[10px] uppercase tracking-wider">Veja quanto você pode ganhar por operação</p>
-        </div>
-      </div>
-
-      {/* Input de lote */}
-      <div className="relative mb-6 md:mb-8">
-        <label className="text-white/30 text-[10px] md:text-xs font-semibold uppercase tracking-wider block mb-2 md:mb-3">
-          Quantidade de mini contratos
-        </label>
-        <div className="flex items-center gap-3 md:gap-4">
-          <button
-            onClick={() => setLote(Math.max(1, lote - 1))}
-            className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white/50 hover:text-white hover:border-white/10 transition-all text-lg font-bold cursor-pointer"
-          >
-            -
-          </button>
-          <div className="flex-1 relative">
-            <input
-              type="number"
-              min="1"
-              max="100"
-              value={lote}
-              onChange={(e) => setLote(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
-              className="w-full bg-white/[0.03] border border-white/[0.06] text-white text-center text-xl md:text-2xl font-black rounded-xl py-3 focus:outline-none focus:border-[#00ff87]/40 transition-all [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-white/15 text-xs font-medium">contratos</span>
-          </div>
-          <button
-            onClick={() => setLote(Math.min(100, lote + 1))}
-            className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white/50 hover:text-white hover:border-white/10 transition-all text-lg font-bold cursor-pointer"
-          >
-            +
-          </button>
-        </div>
-        <div className="flex justify-center gap-2 mt-3">
-          {[1, 5, 10, 20].map((v) => (
-            <button
-              key={v}
-              onClick={() => setLote(v)}
-              className={`px-3 py-1.5 rounded-lg text-[10px] md:text-[11px] font-semibold transition-all cursor-pointer ${
-                lote === v
-                  ? 'bg-[#00ff87]/10 text-[#00ff87] border border-[#00ff87]/20'
-                  : 'bg-white/[0.03] text-white/30 border border-white/[0.06] hover:text-white/50'
-              }`}
-            >
-              {v} {v === 1 ? 'contrato' : 'contratos'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Resultados */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 relative">
-        <div className="bg-[#00ff87]/[0.04] border border-[#00ff87]/10 rounded-2xl p-4 md:p-5 text-center">
-          <span className="text-white/30 text-[9px] md:text-[10px] uppercase tracking-wider font-semibold block mb-2">Alaska Direto</span>
-          <span className="text-[#00ff87] text-2xl md:text-3xl font-black block">
-            R$ {alaskaGain.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-          </span>
-          <span className="text-white/15 text-[9px] md:text-[10px] mt-1 block">{lote} x 100 pts x R$ {pointValue.toFixed(2)}</span>
-        </div>
-
-        <div className="bg-[#3b82f6]/[0.04] border border-[#3b82f6]/10 rounded-2xl p-4 md:p-5 text-center">
-          <span className="text-white/30 text-[9px] md:text-[10px] uppercase tracking-wider font-semibold block mb-2">Com Square (3x)</span>
-          <span className="text-[#3b82f6] text-2xl md:text-3xl font-black block">
-            R$ {squareGainSimple.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-          </span>
-          <span className="text-white/15 text-[9px] md:text-[10px] mt-1 block">{lote * 3} x 120 pts x R$ {pointValue.toFixed(2)}</span>
-        </div>
-
-        <div className="bg-[#ff4757]/[0.04] border border-[#ff4757]/10 rounded-2xl p-4 md:p-5 text-center">
-          <span className="text-white/30 text-[9px] md:text-[10px] uppercase tracking-wider font-semibold block mb-2">Stop Loss</span>
-          <span className="text-[#ff4757] text-2xl md:text-3xl font-black block">
-            -R$ {stopLoss.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-          </span>
-          <span className="text-white/15 text-[9px] md:text-[10px] mt-1 block">{lote} x 400 pts x R$ {pointValue.toFixed(2)}</span>
-        </div>
-      </div>
-
-      <p className="text-white/10 text-[9px] md:text-[10px] text-center mt-4 relative">
-        * Valores aproximados por operação. Cada ponto do mini índice vale R$ 0,20 por contrato.
-      </p>
     </div>
   )
 }
@@ -343,9 +238,6 @@ export default function StrategyPage() {
             </div>
           </div>
         </div>
-
-        {/* Simulador de Ganhos */}
-        <Simulator />
 
         {/* Resumo final */}
         <div className="relative overflow-hidden bg-white/[0.02] border border-white/[0.04] rounded-2xl p-6 md:p-10 text-center">
