@@ -69,23 +69,23 @@ export default function Heatmap({ trades }) {
   }
 
   return (
-    <div className="relative overflow-hidden bg-white/[0.02] backdrop-blur border border-white/[0.04] rounded-2xl p-6">
+    <div className="relative overflow-hidden bg-white/[0.02] backdrop-blur border border-white/[0.04] rounded-2xl p-4 md:p-6">
       <div className="absolute inset-0 bg-gradient-to-br from-[#00ff87]/[0.01] to-transparent pointer-events-none" />
 
-      <div className="flex items-center gap-3 mb-6 relative">
-        <div className="w-8 h-8 rounded-xl bg-[#00ff87]/10 flex items-center justify-center">
-          <Grid3X3 className="w-4 h-4 text-[#00ff87]" />
+      <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6 relative">
+        <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-[#00ff87]/10 flex items-center justify-center">
+          <Grid3X3 className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff87]" />
         </div>
         <span className="text-white font-semibold text-sm">Heatmap de Performance</span>
       </div>
 
-      <div className="overflow-x-auto relative">
-        <table className="w-full border-separate" style={{ borderSpacing: '4px' }}>
+      <div className="overflow-x-auto relative -mx-2 px-2 md:mx-0 md:px-0">
+        <table className="w-full border-separate min-w-[500px]" style={{ borderSpacing: window.innerWidth < 768 ? '2px' : '4px' }}>
           <thead>
             <tr>
-              <th className="w-20" />
+              <th className="w-14 md:w-20" />
               {WEEKDAYS.map((day) => (
-                <th key={day} className="text-[10px] text-white/20 uppercase tracking-[0.15em] font-semibold text-center py-2 min-w-[100px]">
+                <th key={day} className="text-[9px] md:text-[10px] text-white/20 uppercase tracking-[0.15em] font-semibold text-center py-1.5 md:py-2 min-w-[80px] md:min-w-[100px]">
                   {WEEKDAY_LABELS[day]}
                 </th>
               ))}
@@ -94,7 +94,7 @@ export default function Heatmap({ trades }) {
           <tbody>
             {HOURS.map((hour) => (
               <tr key={hour}>
-                <td className="text-[11px] text-white/40 font-semibold py-1 px-3 uppercase tracking-wider text-right">{hour}:00</td>
+                <td className="text-[10px] md:text-[11px] text-white/40 font-semibold py-1 px-2 md:px-3 uppercase tracking-wider text-right">{hour}:00</td>
                 {WEEKDAYS.map((day) => {
                   const key = `${day}-${hour}`
                   const cell = grid[key]
@@ -103,31 +103,31 @@ export default function Heatmap({ trades }) {
                   return (
                     <td
                       key={day}
-                      className="text-center rounded-xl relative group cursor-default transition-all duration-200 hover:scale-[1.05]"
+                      className="text-center rounded-lg md:rounded-xl relative group cursor-default transition-all duration-200 hover:scale-[1.05]"
                       style={{
                         ...getCellStyle(value),
-                        padding: '16px 6px',
+                        padding: window.innerWidth < 768 ? '10px 4px' : '16px 6px',
                       }}
                     >
                       {value !== null ? (
                         <>
-                          <div className={`text-[13px] font-bold ${value >= 0 ? 'text-[#00ff87]' : 'text-[#ff4757]'}`}>
+                          <div className={`text-[11px] md:text-[13px] font-bold ${value >= 0 ? 'text-[#00ff87]' : 'text-[#ff4757]'}`}>
                             {value >= 0 ? '+' : ''}{Number(value.toFixed(0)).toLocaleString('pt-BR')}
                           </div>
-                          <div className="text-[9px] text-white/20 mt-1 font-medium">
+                          <div className="text-[8px] md:text-[9px] text-white/20 mt-0.5 md:mt-1 font-medium">
                             {cell.count} {cell.count === 1 ? 'op' : 'ops'}
                           </div>
 
-                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-[#0c0c10]/95 backdrop-blur-xl border border-white/[0.06] rounded-xl px-4 py-3 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-10 shadow-2xl shadow-black/60">
-                            <div className="text-white/30 text-[10px] font-medium mb-1.5">{WEEKDAY_LABELS[day]} &middot; {hour}:00</div>
-                            <div className={`font-bold text-sm ${value >= 0 ? 'text-[#00ff87]' : 'text-[#ff4757]'}`}>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-[#0c0c10]/95 backdrop-blur-xl border border-white/[0.06] rounded-xl px-3 py-2 md:px-4 md:py-3 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-10 shadow-2xl shadow-black/60">
+                            <div className="text-white/30 text-[9px] md:text-[10px] font-medium mb-1 md:mb-1.5">{WEEKDAY_LABELS[day]} &middot; {hour}:00</div>
+                            <div className={`font-bold text-xs md:text-sm ${value >= 0 ? 'text-[#00ff87]' : 'text-[#ff4757]'}`}>
                               R$ {value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                             </div>
-                            <div className="text-white/20 text-[10px] mt-0.5">{cell.count} operacoes</div>
+                            <div className="text-white/20 text-[9px] md:text-[10px] mt-0.5">{cell.count} operacoes</div>
                           </div>
                         </>
                       ) : (
-                        <div className="text-white/[0.07] text-[11px] font-medium">&mdash;</div>
+                        <div className="text-white/[0.07] text-[10px] md:text-[11px] font-medium">&mdash;</div>
                       )}
                     </td>
                   )
@@ -138,18 +138,18 @@ export default function Heatmap({ trades }) {
         </table>
       </div>
 
-      <div className="flex items-center justify-center gap-6 mt-6 pt-5 border-t border-white/[0.04] relative">
+      <div className="flex items-center justify-center gap-4 md:gap-6 mt-4 md:mt-6 pt-4 md:pt-5 border-t border-white/[0.04] relative">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-md" style={{ backgroundColor: 'rgba(255, 71, 87, 0.3)' }} />
-          <span className="text-[10px] text-white/20 uppercase tracking-[0.15em] font-medium">Prejuizo</span>
+          <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-md" style={{ backgroundColor: 'rgba(255, 71, 87, 0.3)' }} />
+          <span className="text-[9px] md:text-[10px] text-white/20 uppercase tracking-[0.15em] font-medium">Prejuizo</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-md bg-white/[0.03]" />
-          <span className="text-[10px] text-white/20 uppercase tracking-[0.15em] font-medium">Sem operacao</span>
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-md bg-white/[0.03]" />
+          <span className="text-[9px] md:text-[10px] text-white/20 uppercase tracking-[0.15em] font-medium">Sem operacao</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-md" style={{ backgroundColor: 'rgba(0, 255, 135, 0.3)' }} />
-          <span className="text-[10px] text-white/20 uppercase tracking-[0.15em] font-medium">Lucro</span>
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-md" style={{ backgroundColor: 'rgba(0, 255, 135, 0.3)' }} />
+          <span className="text-[9px] md:text-[10px] text-white/20 uppercase tracking-[0.15em] font-medium">Lucro</span>
         </div>
       </div>
     </div>

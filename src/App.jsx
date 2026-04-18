@@ -16,7 +16,7 @@ export default function App() {
       <div className="max-w-7xl mx-auto">
         <Header />
 
-        <main className="p-6 flex flex-col gap-5">
+        <main className="p-3 md:p-6 flex flex-col gap-3 md:gap-5">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
               <div className="relative">
@@ -31,7 +31,7 @@ export default function App() {
               <StatsCards stats={stats} />
               <Filters filters={filters} setFilters={setFilters} />
               <EquityChart data={equityCurve} />
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-5">
                 <YearlyChart trades={trades} />
                 <MonthlyChart trades={trades} />
               </div>
@@ -40,7 +40,7 @@ export default function App() {
           )}
         </main>
 
-        <footer className="text-center py-8 text-white/10 text-[11px] font-medium tracking-wider border-t border-white/[0.03]">
+        <footer className="text-center py-6 md:py-8 text-white/10 text-[10px] md:text-[11px] font-medium tracking-wider border-t border-white/[0.03]">
           ALASKA SQUARE &copy; {new Date().getFullYear()}
         </footer>
       </div>
