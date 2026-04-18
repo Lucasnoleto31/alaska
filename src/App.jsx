@@ -5,6 +5,7 @@ import EquityChart from './components/EquityChart'
 import YearlyChart from './components/YearlyChart'
 import MonthlyChart from './components/MonthlyChart'
 import Heatmap from './components/Heatmap'
+import StrategySection from './components/StrategySection'
 import { useTrades } from './hooks/useTrades'
 import { Loader2 } from 'lucide-react'
 
@@ -36,6 +37,7 @@ export default function App() {
                 <MonthlyChart trades={trades} />
               </div>
               <Heatmap trades={trades} />
+              <StrategySection />
             </>
           )}
         </main>
