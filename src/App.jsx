@@ -22,7 +22,7 @@ function DashboardPage() {
               <Loader2 className="w-5 h-5 text-[#00ff87] animate-spin" />
             </div>
           </div>
-          <span className="text-white/20 text-sm font-medium">Carregando operacoes...</span>
+          <span className="text-white/20 text-sm font-medium">Carregando operações...</span>
         </div>
       ) : (
         <>

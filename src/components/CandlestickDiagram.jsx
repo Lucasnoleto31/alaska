@@ -4,8 +4,8 @@ export default function CandlestickDiagram() {
   const [activeZone, setActiveZone] = useState(null)
 
   return (
-    <div className="relative w-full">
-      <svg viewBox="0 0 800 520" className="w-full h-auto" style={{ maxHeight: '520px' }}>
+    <div className="relative w-full overflow-x-auto -mx-2 px-2 md:mx-0 md:px-0">
+      <svg viewBox="0 0 800 520" className="w-full h-auto min-w-[600px]" style={{ maxHeight: '520px' }}>
         <defs>
           <filter id="glow-green">
             <feGaussianBlur stdDeviation="4" result="blur" />
@@ -191,7 +191,7 @@ export default function CandlestickDiagram() {
         <text x="398" y="492" fill="rgba(255,255,255,0.35)" fontSize="10" fontWeight="500">Zona de entrada</text>
 
         <rect x="520" y="483" width="20" height="10" rx="3" fill="rgba(59,130,246,0.3)" />
-        <text x="548" y="492" fill="rgba(255,255,255,0.35)" fontSize="10" fontWeight="500">Square (preco medio)</text>
+        <text x="548" y="492" fill="rgba(255,255,255,0.35)" fontSize="10" fontWeight="500">Square (preço médio)</text>
       </svg>
 
       {/* Tooltip flutuante */}
@@ -200,7 +200,7 @@ export default function CandlestickDiagram() {
           {activeZone === 'candle1' && (
             <>
               <p className="text-[#00ff87] text-[11px] md:text-xs font-bold mb-1">Vela de Sinal</p>
-              <p className="text-white/40 text-[10px] md:text-[11px] leading-relaxed">Fechamento positivo habilita a operacao na proxima vela.</p>
+              <p className="text-white/40 text-[10px] md:text-[11px] leading-relaxed">Fechamento positivo habilita a operação na próxima vela.</p>
             </>
           )}
           {activeZone === 'candle2' && (
@@ -212,7 +212,7 @@ export default function CandlestickDiagram() {
           {activeZone === 'entry' && (
             <>
               <p className="text-[#ffa502] text-[11px] md:text-xs font-bold mb-1">Gatilho de Entrada</p>
-              <p className="text-white/40 text-[10px] md:text-[11px] leading-relaxed">-200 pontos da abertura = inicio da venda a descoberto.</p>
+              <p className="text-white/40 text-[10px] md:text-[11px] leading-relaxed">-200 pontos da abertura = início da venda a descoberto.</p>
             </>
           )}
           {activeZone === 'target' && (
@@ -224,13 +224,13 @@ export default function CandlestickDiagram() {
           {activeZone === 'stop' && (
             <>
               <p className="text-[#ff4757] text-[11px] md:text-xs font-bold mb-1">Stop Loss</p>
-              <p className="text-white/40 text-[10px] md:text-[11px] leading-relaxed">Protecao a 400 pontos acima da entrada. Risco controlado.</p>
+              <p className="text-white/40 text-[10px] md:text-[11px] leading-relaxed">Proteção a 400 pontos acima da entrada. Risco controlado.</p>
             </>
           )}
           {activeZone === 'square' && (
             <>
               <p className="text-[#3b82f6] text-[11px] md:text-xs font-bold mb-1">Square</p>
-              <p className="text-white/40 text-[10px] md:text-[11px] leading-relaxed">Preco medio com 3x o lote. Entra a 150 pontos contra. Alvo: +120 pontos.</p>
+              <p className="text-white/40 text-[10px] md:text-[11px] leading-relaxed">Preço médio com 3x o lote. Entra a 150 pontos contra. Alvo: +120 pontos.</p>
             </>
           )}
         </div>

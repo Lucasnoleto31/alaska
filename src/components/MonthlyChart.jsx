@@ -17,7 +17,7 @@ function CustomTooltip({ active, payload }) {
         </span>
       </div>
       <div className="flex items-center justify-between gap-4 md:gap-6 mt-1">
-        <span className="text-white/40 text-[11px] md:text-xs">Operacoes</span>
+        <span className="text-white/40 text-[11px] md:text-xs">Operações</span>
         <span className="text-white text-[11px] md:text-xs font-medium">{data.count}</span>
       </div>
       <div className="flex items-center justify-between gap-4 md:gap-6 mt-1">
@@ -63,7 +63,7 @@ export default function MonthlyChart({ trades }) {
         <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-[#00ff87]/10 flex items-center justify-center">
           <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff87]" />
         </div>
-        <span className="text-white font-semibold text-sm">Resultado por Mes</span>
+        <span className="text-white font-semibold text-sm">Resultado por Mês</span>
         <span className="text-white/15 text-[9px] md:text-[10px] ml-1 md:ml-2 uppercase tracking-wider">acumulado de todos os anos</span>
       </div>
 

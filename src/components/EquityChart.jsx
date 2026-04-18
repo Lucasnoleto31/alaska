@@ -37,7 +37,7 @@ export default function EquityChart({ data }) {
         <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-[#00ff87]/10 flex items-center justify-center">
           <TrendingUp className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff87]" />
         </div>
-        <span className="text-white font-semibold text-sm">Relatorio de Performance</span>
+        <span className="text-white font-semibold text-sm">Relatório de Performance</span>
         {data.length > 0 && (
           <div className="ml-auto flex items-center gap-2 md:gap-3">
             <span className="text-white/20 text-[10px] md:text-xs font-medium">{data.length} ops</span>
@@ -53,7 +53,7 @@ export default function EquityChart({ data }) {
           <div className="w-12 h-12 rounded-2xl bg-white/[0.03] flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-white/10" />
           </div>
-          <span className="text-white/20 text-sm">Nenhum trade encontrado</span>
+          <span className="text-white/20 text-sm">Nenhuma operação encontrada</span>
         </div>
       ) : (
         <div className="relative -ml-2 md:ml-0">

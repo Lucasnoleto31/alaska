@@ -123,7 +123,7 @@ export default function Heatmap({ trades }) {
                             <div className={`font-bold text-xs md:text-sm ${value >= 0 ? 'text-[#00ff87]' : 'text-[#ff4757]'}`}>
                               R$ {value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                             </div>
-                            <div className="text-white/20 text-[9px] md:text-[10px] mt-0.5">{cell.count} operacoes</div>
+                            <div className="text-white/20 text-[9px] md:text-[10px] mt-0.5">{cell.count} operações</div>
                           </div>
                         </>
                       ) : (
@@ -141,11 +141,11 @@ export default function Heatmap({ trades }) {
       <div className="flex items-center justify-center gap-4 md:gap-6 mt-4 md:mt-6 pt-4 md:pt-5 border-t border-white/[0.04] relative">
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-md" style={{ backgroundColor: 'rgba(255, 71, 87, 0.3)' }} />
-          <span className="text-[9px] md:text-[10px] text-white/20 uppercase tracking-[0.15em] font-medium">Prejuizo</span>
+          <span className="text-[9px] md:text-[10px] text-white/20 uppercase tracking-[0.15em] font-medium">Prejuízo</span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
           <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-md bg-white/[0.03]" />
-          <span className="text-[9px] md:text-[10px] text-white/20 uppercase tracking-[0.15em] font-medium">Sem operacao</span>
+          <span className="text-[9px] md:text-[10px] text-white/20 uppercase tracking-[0.15em] font-medium">Sem operação</span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
           <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-md" style={{ backgroundColor: 'rgba(0, 255, 135, 0.3)' }} />

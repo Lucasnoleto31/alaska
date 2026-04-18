@@ -15,7 +15,7 @@ function CustomTooltip({ active, payload }) {
         </span>
       </div>
       <div className="flex items-center justify-between gap-4 md:gap-6 mt-1">
-        <span className="text-white/40 text-[11px] md:text-xs">Operacoes</span>
+        <span className="text-white/40 text-[11px] md:text-xs">Operações</span>
         <span className="text-white text-[11px] md:text-xs font-medium">{data.count}</span>
       </div>
     </div>

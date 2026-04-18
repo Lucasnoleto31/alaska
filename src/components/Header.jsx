@@ -45,7 +45,7 @@ export default function Header() {
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">Estrategia</span>
+            <span className="hidden md:inline">Estratégia</span>
           </Link>
         </nav>
       </div>

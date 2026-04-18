@@ -123,7 +123,7 @@ export default function Filters({ filters, setFilters }) {
       </div>
 
       <div className="flex flex-col gap-3 md:gap-4 relative">
-        <FilterRow title="Periodo">
+        <FilterRow title="Período">
           {PERIODS.map((p) => (
             <Btn
               key={p.value + p.label}
@@ -162,7 +162,7 @@ export default function Filters({ filters, setFilters }) {
 
         <div className="border-t border-white/[0.04]" />
 
-        <FilterRow title="Mes">
+        <FilterRow title="Mês">
           {MONTHS.map((m) => (
             <Btn key={m.value} label={m.label} active={filters.months.includes(m.value)} onClick={() => toggleMulti('months', m.value)} />
           ))}
@@ -174,7 +174,7 @@ export default function Filters({ filters, setFilters }) {
           ))}
         </FilterRow>
 
-        <FilterRow title="Horario">
+        <FilterRow title="Horário">
           {HOURS.map((h) => (
             <Btn key={h.value} label={h.label} active={filters.hours.includes(h.value)} onClick={() => toggleMulti('hours', h.value)} />
           ))}

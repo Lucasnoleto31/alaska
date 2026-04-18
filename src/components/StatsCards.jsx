@@ -17,7 +17,7 @@ export default function StatsCards({ stats }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
       <StatCard
-        label="Total de Operacoes"
+        label="Total de Operações"
         value={<span className="text-white">{stats.totalTrades}</span>}
         icon={BarChart3}
         iconColor="text-[#00ff87]/60"
@@ -39,7 +39,7 @@ export default function StatsCards({ stats }) {
         iconColor="text-[#00ff87]/60"
       />
       <StatCard
-        label="Vitorias / Derrotas"
+        label="Vitórias / Derrotas"
         value={
           <span>
             <span className="text-[#00ff87]">{stats.wins}</span>
