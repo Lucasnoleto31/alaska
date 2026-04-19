@@ -5,13 +5,14 @@ import CandlestickDiagram from '../components/CandlestickDiagram'
 /* ─── CREATOR HERO ─── */
 
 const LIFE_CANDLES = [
-  { year: '2000', type: 'bear', h: 55, title: 'O começo difícil', text: 'Trabalhos informais, vendendo picolés em estádios. A realidade era dura, mas a vontade de crescer já estava lá.' },
-  { year: '2004', type: 'bull', h: 40, title: 'Trader', text: 'Entrou na faculdade. O primeiro contato com números que iam além da sobrevivência.' },
-  { year: '2006', type: 'bull', h: 65, title: 'Descobriu o mercado', text: 'Durante a graduação, teve o primeiro contato com a bolsa de valores. O fascínio foi imediato.' },
-  { year: '2008', type: 'bear', h: 75, title: 'Crise do subprime', text: 'O mundo financeiro desabou. Mas foi nessa queda que aprendeu o que nenhum curso ensina.' },
-  { year: '2010', type: 'bull', h: 45, title: 'Trader ativo', text: 'Saiu do modo investidor e entrou no modo operador. Análise técnica virou rotina.' },
-  { year: '2015', type: 'bear', h: 35, title: 'Refinamento', text: 'Anos testando setups, perdendo, ajustando. O preço da consistência.' },
-  { year: '2018', type: 'bull', h: 85, title: 'Alaska & Square', text: 'Tudo se encaixou. A estratégia nasceu — 89% de acerto no mini índice Ibovespa.' },
+  { year: '2000', type: 'bear', h: 50, title: 'O sonho e a luta', text: 'Queria ser jogador de futebol, enquanto isso vendia picolé no estádio para ajudar com as contas.' },
+  { year: '2004', type: 'bull', h: 40, title: 'Estágio na CELG', text: 'Começa um estágio na CELG. O primeiro passo no mundo profissional.' },
+  { year: '2006', type: 'bull', h: 55, title: 'Descobriu a Bolsa', text: 'Tem seu primeiro contato com a bolsa de valores através do FolhaINVEST. O fascínio foi imediato.' },
+  { year: '2009', type: 'bull', h: 65, title: 'Primeiras operações', text: 'Aprovado em concurso público e no vestibular, junta seus primeiros R$ 3.000, abre conta na TOV e começa a operar.' },
+  { year: '2013', type: 'bull', h: 70, title: 'Estatística como base', text: 'Descobre a estatística como base da estratégia de exaustão de movimento e passa a ser lucrativo em bolsa.' },
+  { year: '2015', type: 'bear', h: 45, title: '100% dedicado', text: 'Pede exoneração do cargo público e fecha outros negócios. Passa a dedicar 100% do tempo às operações em ações e índice.' },
+  { year: '2017', type: 'bull', h: 60, title: 'Notoriedade', text: 'Cria o Instagram e passa a ganhar notoriedade no Brasil compartilhando suas operações.' },
+  { year: '2018', type: 'bull', h: 85, title: 'Alaska & Square', text: 'Nasce a estratégia Alaska Square para operar índice — 89% de acerto no mini índice Ibovespa.' },
 ]
 
 function CreatorHero() {
@@ -59,7 +60,7 @@ function CreatorHero() {
               <span className="text-[#00ff87]">Gonçalvez</span>
             </h2>
             <p className="text-white/30 text-[10px] md:text-sm mt-1.5 md:mt-3 leading-relaxed max-w-sm">
-              De trabalhos informais à criação de uma estratégia com 89% de acerto. Uma trajetória contada em candles.
+              De vendedor de picolé no estádio a criador de uma estratégia com 89% de acerto. Uma trajetória contada em candles.
             </p>
 
             {/* Stats row */}
