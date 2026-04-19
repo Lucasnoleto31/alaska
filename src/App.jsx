@@ -8,7 +8,7 @@ import MonthlyChart from './components/MonthlyChart'
 import Heatmap from './components/Heatmap'
 import StrategyPage from './pages/StrategyPage'
 import { useTrades } from './hooks/useTrades'
-import { Loader2, TrendingUp, CandlestickChart } from 'lucide-react'
+import { Loader2, TrendingUp, CandlestickChart, Info } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 
 function AnimatedNumber({ value, prefix = '', suffix = '', color = 'text-white', duration = 2000 }) {
@@ -118,6 +118,20 @@ function DashboardPage() {
         </div>
       ) : (
         <>
+          {/* Observação sobre contratos */}
+          <div className="flex items-center justify-center gap-1.5 relative group cursor-default">
+            <Info className="w-3 h-3 md:w-3.5 md:h-3.5 text-white/20" />
+            <span className="text-white/25 text-[10px] md:text-[11px] font-medium">
+              Valores realizados com <span className="text-white/40 font-semibold">16 contratos</span>
+            </span>
+            {/* Tooltip */}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-[#0c0c10]/95 backdrop-blur-xl border border-white/[0.06] rounded-xl px-3.5 py-2.5 md:px-4 md:py-3 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-20 shadow-2xl">
+              <p className="text-white/50 text-[10px] md:text-[11px] leading-relaxed text-center">
+                4 contratos no <span className="text-[#00ff87] font-semibold">Alaska</span> e 12 no <span className="text-[#3b82f6] font-semibold">Square</span>
+              </p>
+            </div>
+          </div>
+
           <ResultsHero stats={stats} />
           <StatsCards stats={stats} />
           <Filters filters={filters} setFilters={setFilters} />

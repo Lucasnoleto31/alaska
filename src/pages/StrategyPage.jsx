@@ -66,7 +66,7 @@ function CreatorHero() {
             {/* Stats row */}
             <div className="flex gap-3 md:gap-6 mt-3 md:mt-6">
               {[
-                { value: '500+', label: 'Membros' },
+                { value: '+3.500', label: 'Operações' },
                 { value: '89%', label: 'Acerto' },
                 { value: '+20', label: 'Anos de exp.' },
               ].map((s) => (
