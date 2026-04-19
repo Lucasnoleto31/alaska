@@ -63,6 +63,9 @@ export function useTrades() {
 
   const periodLimit = useMemo(() => {
     const now = new Date()
+    if (filters.period === '1d') {
+      const d = new Date(now); d.setDate(d.getDate() - 1); return d
+    }
     if (filters.period === '7d') {
       const d = new Date(now); d.setDate(d.getDate() - 7); return d
     }

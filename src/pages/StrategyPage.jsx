@@ -1,40 +1,419 @@
-import { Trophy, TrendingDown, Shield, Target, AlertTriangle, Zap, ArrowDown, Users, User } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { Trophy, TrendingDown, Shield, Target, AlertTriangle, Users, ChevronLeft, ChevronRight, MessageCircle, Star } from 'lucide-react'
 import CandlestickDiagram from '../components/CandlestickDiagram'
 
-function FlowStep({ number, icon: Icon, color, title, description, details }) {
+/* ─── CREATOR HERO ─── */
+
+const LIFE_CANDLES = [
+  { year: '2000', type: 'bear', h: 55, title: 'O começo difícil', text: 'Trabalhos informais, vendendo picolés em estádios. A realidade era dura, mas a vontade de crescer já estava lá.' },
+  { year: '2004', type: 'bull', h: 40, title: 'Trader', text: 'Entrou na faculdade. O primeiro contato com números que iam além da sobrevivência.' },
+  { year: '2006', type: 'bull', h: 65, title: 'Descobriu o mercado', text: 'Durante a graduação, teve o primeiro contato com a bolsa de valores. O fascínio foi imediato.' },
+  { year: '2008', type: 'bear', h: 75, title: 'Crise do subprime', text: 'O mundo financeiro desabou. Mas foi nessa queda que aprendeu o que nenhum curso ensina.' },
+  { year: '2010', type: 'bull', h: 45, title: 'Trader ativo', text: 'Saiu do modo investidor e entrou no modo operador. Análise técnica virou rotina.' },
+  { year: '2015', type: 'bear', h: 35, title: 'Refinamento', text: 'Anos testando setups, perdendo, ajustando. O preço da consistência.' },
+  { year: '2018', type: 'bull', h: 85, title: 'Alaska & Square', text: 'Tudo se encaixou. A estratégia nasceu — 89% de acerto no mini índice Ibovespa.' },
+]
+
+function CreatorHero() {
+  const [loaded, setLoaded] = useState(false)
+  const [activeCandle, setActiveCandle] = useState(-1)
+  const [revealedCount, setRevealedCount] = useState(0)
+  const autoRef = useRef(null)
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoaded(true), 150)
+    return () => clearTimeout(t)
+  }, [])
+
+  // Sequential candle reveal + auto-play story
+  useEffect(() => {
+    if (!loaded) return
+    const timers = LIFE_CANDLES.map((_, i) =>
+      setTimeout(() => {
+        setRevealedCount(i + 1)
+        setActiveCandle(i)
+      }, 600 + i * 400)
+    )
+    // After all revealed, clear selection
+    const clearTimer = setTimeout(() => setActiveCandle(-1), 600 + LIFE_CANDLES.length * 400 + 2000)
+    return () => { timers.forEach(clearTimeout); clearTimeout(clearTimer) }
+  }, [loaded])
+
   return (
-    <div className="relative overflow-hidden bg-white/[0.02] border border-white/[0.04] rounded-xl md:rounded-2xl p-3.5 md:p-7">
-      <div className="absolute top-0 left-0 w-full h-0.5 md:h-1" style={{ background: `linear-gradient(90deg, ${color}40, transparent)` }} />
+    <div className="relative mb-6 md:mb-20">
+      <div className="flex flex-col md:flex-row md:items-stretch gap-4 md:gap-0">
 
-      <div className="flex items-start gap-3 md:gap-5">
-        <div className="relative shrink-0">
-          <div className="w-9 h-9 md:w-14 md:h-14 rounded-lg md:rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${color}12` }}>
-            <Icon className="w-4 h-4 md:w-6 md:h-6" style={{ color }} />
-          </div>
-          <div className="absolute -top-1 -left-1 md:-top-2 md:-left-2 w-4 h-4 md:w-6 md:h-6 rounded-full bg-[#060608] border-2 flex items-center justify-center" style={{ borderColor: `${color}40` }}>
-            <span className="text-[7px] md:text-[10px] font-black" style={{ color }}>{number}</span>
-          </div>
-        </div>
+        {/* LEFT + CENTER — Name, story, candles */}
+        <div className="flex-1 min-w-0 md:pr-8 lg:pr-12 flex flex-col justify-center">
+          {/* Name */}
+          <div
+            className="transition-all duration-1000 delay-100"
+            style={{ opacity: loaded ? 1 : 0, transform: loaded ? 'translateY(0)' : 'translateY(24px)' }}
+          >
+            <div className="inline-flex items-center gap-1.5 bg-[#00ff87]/[0.06] border border-[#00ff87]/10 px-2.5 py-1 md:px-3 md:py-1.5 rounded-full mb-3 md:mb-5">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#00ff87] animate-pulse" />
+              <span className="text-[#00ff87]/60 text-[9px] md:text-[11px] font-semibold tracking-wide">QUEM CRIOU A ESTRATÉGIA</span>
+            </div>
+            <h2 className="text-white font-black text-xl md:text-5xl tracking-tight leading-[1.1]">
+              Fabrício<br />
+              <span className="text-[#00ff87]">Gonçalvez</span>
+            </h2>
+            <p className="text-white/30 text-[10px] md:text-sm mt-1.5 md:mt-3 leading-relaxed max-w-sm">
+              De trabalhos informais à criação de uma estratégia com 89% de acerto. Uma trajetória contada em candles.
+            </p>
 
-        <div className="flex-1 min-w-0">
-          <h3 className="text-white font-bold text-[13px] md:text-lg mb-0.5 md:mb-1.5">{title}</h3>
-          <p className="text-white/40 text-[11px] md:text-sm leading-relaxed mb-2.5 md:mb-4">{description}</p>
-
-          {details && (
-            <div className="flex flex-wrap gap-1.5 md:gap-2">
-              {details.map((d, i) => (
-                <div key={i} className="flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 rounded-md md:rounded-lg text-[9px] md:text-[11px] font-semibold" style={{ backgroundColor: `${d.color || color}10`, color: d.color || color }}>
-                  <Zap className="w-2 h-2 md:w-2.5 md:h-2.5" />
-                  {d.text}
+            {/* Stats row */}
+            <div className="flex gap-3 md:gap-6 mt-3 md:mt-6">
+              {[
+                { value: '500+', label: 'Membros' },
+                { value: '89%', label: 'Acerto' },
+                { value: '+20', label: 'Anos de exp.' },
+              ].map((s) => (
+                <div key={s.label}>
+                  <span className="text-white font-black text-base md:text-2xl block">{s.value}</span>
+                  <span className="text-white/20 text-[7px] md:text-[10px] uppercase tracking-wider">{s.label}</span>
                 </div>
               ))}
             </div>
-          )}
+          </div>
+
+          {/* Candle timeline */}
+          <div
+            className="mt-4 md:mt-10 transition-all duration-700 delay-300"
+            style={{ opacity: loaded ? 1 : 0 }}
+          >
+            {/* Candles row */}
+            <div className="flex items-end gap-1 md:gap-2.5 h-[80px] md:h-[140px] mb-1.5 md:mb-3">
+              {LIFE_CANDLES.map((c, i) => {
+                const revealed = i < revealedCount
+                const isActive = i === activeCandle
+                const isBull = c.type === 'bull'
+                const color = isBull ? '#00ff87' : '#ff4757'
+                const maxH = typeof window !== 'undefined' && window.innerWidth < 768 ? 60 : 120
+                const bodyH = (c.h / 100) * maxH
+
+                return (
+                  <div
+                    key={i}
+                    className="flex-1 flex flex-col items-center cursor-pointer group"
+                    onMouseEnter={() => setActiveCandle(i)}
+                    onMouseLeave={() => setActiveCandle(-1)}
+                    onClick={() => setActiveCandle(activeCandle === i ? -1 : i)}
+                  >
+                    {/* Wick top */}
+                    <div
+                      className="w-px md:w-[1.5px] transition-all duration-500"
+                      style={{
+                        height: revealed ? 8 : 0,
+                        backgroundColor: color,
+                        opacity: revealed ? 0.4 : 0,
+                        transitionDelay: `${i * 60}ms`,
+                      }}
+                    />
+                    {/* Body */}
+                    <div
+                      className="w-full max-w-[14px] md:max-w-[28px] rounded-[2px] md:rounded-[4px] transition-all duration-700 relative"
+                      style={{
+                        height: revealed ? bodyH : 0,
+                        backgroundColor: color,
+                        opacity: revealed ? (isActive ? 1 : 0.6) : 0,
+                        transitionDelay: `${i * 60}ms`,
+                        boxShadow: isActive ? `0 0 20px ${color}30` : 'none',
+                      }}
+                    />
+                    {/* Wick bottom */}
+                    <div
+                      className="w-px md:w-[1.5px] transition-all duration-500"
+                      style={{
+                        height: revealed ? 6 : 0,
+                        backgroundColor: color,
+                        opacity: revealed ? 0.4 : 0,
+                        transitionDelay: `${i * 60}ms`,
+                      }}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Year labels */}
+            <div className="flex gap-1 md:gap-2.5">
+              {LIFE_CANDLES.map((c, i) => (
+                <div key={i} className="flex-1 text-center">
+                  <span
+                    className="text-[7px] md:text-[9px] font-semibold transition-all duration-300"
+                    style={{ color: i === activeCandle ? (c.type === 'bull' ? '#00ff87' : '#ff4757') : 'rgba(255,255,255,0.15)' }}
+                  >
+                    {c.year}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Active candle info */}
+            <div className="mt-2 md:mt-4 min-h-[50px] md:min-h-[64px]">
+              {activeCandle >= 0 ? (
+                <div
+                  key={activeCandle}
+                  className="bg-white/[0.03] border rounded-lg md:rounded-xl p-2.5 md:p-3.5 animate-[fadeSlide_0.3s_ease]"
+                  style={{ borderColor: LIFE_CANDLES[activeCandle].type === 'bull' ? 'rgba(0,255,135,0.1)' : 'rgba(255,71,87,0.1)' }}
+                >
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: LIFE_CANDLES[activeCandle].type === 'bull' ? '#00ff87' : '#ff4757' }} />
+                    <span className="text-white font-bold text-[11px] md:text-[13px]">{LIFE_CANDLES[activeCandle].title}</span>
+                  </div>
+                  <p className="text-white/35 text-[10px] md:text-[12px] leading-relaxed">{LIFE_CANDLES[activeCandle].text}</p>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 justify-center py-3">
+                  <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 rounded-sm bg-[#00ff87]/40" />
+                    <div className="w-1.5 h-1.5 rounded-sm bg-[#ff4757]/40" />
+                  </div>
+                  <span className="text-white/15 text-[9px] md:text-[11px]">Toque em um candle para ver a história</span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+
+        {/* RIGHT — Photo, no border, bleeds to edge */}
+        <div
+          className="w-full md:w-[420px] lg:w-[500px] shrink-0 order-first md:order-last transition-all duration-1000 delay-200"
+          style={{ opacity: loaded ? 1 : 0, transform: loaded ? 'scale(1)' : 'scale(0.96)' }}
+        >
+          <div className="relative h-[280px] md:h-full md:min-h-[600px] rounded-xl md:rounded-3xl overflow-hidden group cursor-pointer">
+            <img
+              src="/criador.png"
+              alt="Fabrício Gonçalvez"
+              className="absolute inset-0 w-full h-full object-cover object-top transition-all duration-[1.2s] ease-out group-hover:scale-110 group-hover:brightness-110"
+            />
+            {/* Line sweep on hover */}
+            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00ff87]/60 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/20 to-transparent pointer-events-none transition-opacity duration-700 group-hover:opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#060608]/40 to-transparent pointer-events-none md:block hidden" />
+
+            {/* Bottom badges */}
+            <div className="absolute bottom-2.5 left-2.5 right-2.5 md:bottom-5 md:left-5 flex flex-wrap gap-1 md:gap-2 transition-transform duration-500 group-hover:translate-y-[-4px]">
+              <span className="bg-black/40 backdrop-blur-md px-2 py-0.5 md:px-3 md:py-1.5 rounded-md md:rounded-lg text-white/60 text-[8px] md:text-[10px] font-medium transition-colors duration-500 group-hover:text-white/80">Trader</span>
+              <span className="bg-[#00ff87]/10 backdrop-blur-md px-2 py-0.5 md:px-3 md:py-1.5 rounded-md md:rounded-lg text-[#00ff87]/70 text-[8px] md:text-[10px] font-semibold transition-colors duration-500 group-hover:text-[#00ff87]">Alaska & Square</span>
+            </div>
+          </div>
+        </div>
+
       </div>
+
+      {/* CSS keyframe for info panel */}
+      <style>{`
+        @keyframes fadeSlide {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   )
 }
+
+/* ─── INTERACTIVE STRATEGY STEPPER ─── */
+
+const STEPS = [
+  {
+    num: 1,
+    color: '#00ff87',
+    icon: Target,
+    title: 'Identifique o sinal',
+    subtitle: 'Gráfico de 60 minutos',
+    description: 'Observe se a vela atual fechou positiva (verde). Esse fechamento habilita a operação na vela seguinte.',
+    tags: ['Vela verde = Sinal ativo', 'Vela vermelha = Sem operação'],
+    tagColors: ['#00ff87', '#ff4757'],
+  },
+  {
+    num: 2,
+    color: '#ffa502',
+    icon: TrendingDown,
+    title: 'Aguarde o gatilho',
+    subtitle: 'Próxima vela',
+    description: 'Espere o preço cair 200 pontos a partir da abertura. Quando atingir, inicie a venda a descoberto.',
+    tags: ['Gatilho: -200 pontos da abertura'],
+    tagColors: ['#ffa502'],
+  },
+  {
+    num: 3,
+    color: '#00ff87',
+    icon: Target,
+    title: 'Alvo do Alaska',
+    subtitle: 'Operação aberta',
+    description: 'Com a venda a descoberto aberta, o alvo é de 100 pontos de lucro. Se o mercado continuar caindo, você realiza o ganho rapidamente.',
+    tags: ['Alvo: +100 pontos', 'Stop: 400 pontos'],
+    tagColors: ['#00ff87', '#ff4757'],
+  },
+  {
+    num: 4,
+    color: '#3b82f6',
+    icon: Shield,
+    title: 'Square — O plano B',
+    subtitle: 'Proteção inteligente',
+    description: 'Se o preço recuar 150 pontos contra a posição sem atingir o alvo, entra o SQUARE com 3x o lote. O stop é o mesmo do Alaska.',
+    tags: ['Entrada: +150 pts contra', 'Lote: 3x o Alaska', 'Alvo: +120 pontos'],
+    tagColors: ['#3b82f6', '#3b82f6', '#3b82f6'],
+  },
+]
+
+function StrategyStepper() {
+  const [active, setActive] = useState(0)
+  const [direction, setDirection] = useState(1) // 1=forward, -1=back
+  const intervalRef = useRef(null)
+
+  const goTo = useCallback((idx) => {
+    setDirection(idx > active ? 1 : -1)
+    setActive(idx)
+  }, [active])
+
+  const next = useCallback(() => {
+    setDirection(1)
+    setActive((p) => (p + 1) % STEPS.length)
+  }, [])
+
+  const prev = useCallback(() => {
+    setDirection(-1)
+    setActive((p) => (p - 1 + STEPS.length) % STEPS.length)
+  }, [])
+
+  // Auto-advance
+  useEffect(() => {
+    intervalRef.current = setInterval(next, 5000)
+    return () => clearInterval(intervalRef.current)
+  }, [next])
+
+  const resetAuto = useCallback(() => {
+    clearInterval(intervalRef.current)
+    intervalRef.current = setInterval(next, 5000)
+  }, [next])
+
+  const step = STEPS[active]
+  const Icon = step.icon
+
+  return (
+    <div className="mb-6 md:mb-16">
+      <h2 className="text-white/20 text-[9px] md:text-xs font-semibold uppercase tracking-[0.2em] mb-4 md:mb-8 text-center">Passo a passo</h2>
+
+      <div className="relative overflow-hidden bg-white/[0.02] border border-white/[0.04] rounded-xl md:rounded-2xl">
+        {/* Top progress bar */}
+        <div className="flex h-1 md:h-1.5">
+          {STEPS.map((s, i) => (
+            <div
+              key={i}
+              className="flex-1 cursor-pointer transition-all duration-300"
+              style={{ backgroundColor: i <= active ? s.color : 'rgba(255,255,255,0.03)' }}
+              onClick={() => { goTo(i); resetAuto() }}
+            />
+          ))}
+        </div>
+
+        {/* Step indicators */}
+        <div className="flex px-2.5 pt-2.5 md:px-6 md:pt-5 gap-0.5 md:gap-2">
+          {STEPS.map((s, i) => (
+            <button
+              key={i}
+              onClick={() => { goTo(i); resetAuto() }}
+              className="flex items-center gap-1 md:gap-2 px-1.5 py-1 md:px-3 md:py-1.5 rounded-lg md:rounded-xl transition-all duration-300 cursor-pointer"
+              style={{
+                backgroundColor: i === active ? `${s.color}12` : 'transparent',
+                border: i === active ? `1px solid ${s.color}25` : '1px solid transparent',
+              }}
+            >
+              <div
+                className="w-5 h-5 md:w-6 md:h-6 rounded-md md:rounded-lg flex items-center justify-center text-[9px] md:text-[10px] font-black transition-all duration-300"
+                style={{
+                  backgroundColor: i === active ? `${s.color}20` : 'rgba(255,255,255,0.03)',
+                  color: i === active ? s.color : 'rgba(255,255,255,0.2)',
+                }}
+              >
+                {s.num}
+              </div>
+              <span
+                className="text-[9px] md:text-[11px] font-semibold transition-colors duration-300 hidden md:block"
+                style={{ color: i === active ? s.color : 'rgba(255,255,255,0.15)' }}
+              >
+                {s.title.split(' ').slice(0, 2).join(' ')}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Content area */}
+        <div className="relative min-h-[200px] md:min-h-[260px] p-3.5 md:p-8 pb-14 md:pb-8">
+          <div
+            key={active}
+            className="animate-[stepIn_0.4s_ease]"
+          >
+            <div className="flex items-start gap-3 md:gap-5">
+              <div
+                className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500"
+                style={{ backgroundColor: `${step.color}12` }}
+              >
+                <Icon className="w-4 h-4 md:w-6 md:h-6" style={{ color: step.color }} />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 md:gap-3 mb-1">
+                  <span className="text-white/15 text-[9px] md:text-[10px] uppercase tracking-widest font-medium">{step.subtitle}</span>
+                </div>
+                <h3 className="text-white font-bold text-base md:text-xl mb-2 md:mb-3">{step.title}</h3>
+                <p className="text-white/40 text-[11px] md:text-sm leading-relaxed mb-4 md:mb-5 max-w-lg">{step.description}</p>
+
+                <div className="flex flex-wrap gap-1.5 md:gap-2">
+                  {step.tags.map((tag, ti) => (
+                    <div
+                      key={ti}
+                      className="px-2.5 py-1 md:px-3 md:py-1.5 rounded-lg text-[9px] md:text-[11px] font-semibold"
+                      style={{ backgroundColor: `${step.tagColors[ti]}10`, color: step.tagColors[ti], border: `1px solid ${step.tagColors[ti]}15` }}
+                    >
+                      {tag}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Nav arrows */}
+          <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 flex gap-1.5 md:gap-2">
+            <button
+              onClick={() => { prev(); resetAuto() }}
+              className="w-7 h-7 md:w-9 md:h-9 rounded-lg md:rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/30 hover:text-white/60 hover:bg-white/[0.08] transition-all cursor-pointer"
+            >
+              <ChevronLeft className="w-3.5 h-3.5 md:w-4 md:h-4" />
+            </button>
+            <button
+              onClick={() => { next(); resetAuto() }}
+              className="w-7 h-7 md:w-9 md:h-9 rounded-lg md:rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/30 hover:text-white/60 hover:bg-white/[0.08] transition-all cursor-pointer"
+            >
+              <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
+            </button>
+          </div>
+
+          {/* Step counter */}
+          <div className="absolute bottom-4 left-4 md:bottom-6 md:left-8">
+            <span className="text-white/10 text-[10px] md:text-xs font-mono">
+              {String(active + 1).padStart(2, '0')} / {String(STEPS.length).padStart(2, '0')}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* CSS animation */}
+      <style>{`
+        @keyframes stepIn {
+          from { opacity: 0; transform: translateX(${direction * 20}px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+/* ─── SCENARIO CARDS ─── */
 
 function ScenarioCard({ title, subtitle, result, resultColor, items }) {
   return (
@@ -43,7 +422,6 @@ function ScenarioCard({ title, subtitle, result, resultColor, items }) {
         <h4 className="text-white font-bold text-[13px] md:text-base">{title}</h4>
         <p className="text-white/25 text-[9px] md:text-xs mt-0.5">{subtitle}</p>
       </div>
-
       <div className="flex flex-col gap-1.5 md:gap-2 mb-3 md:mb-4">
         {items.map((item, i) => (
           <div key={i} className="flex items-center justify-between bg-white/[0.02] rounded-lg md:rounded-xl px-2.5 py-2 md:px-3 md:py-2.5">
@@ -52,7 +430,6 @@ function ScenarioCard({ title, subtitle, result, resultColor, items }) {
           </div>
         ))}
       </div>
-
       <div className="pt-2.5 md:pt-3 border-t border-white/[0.04]">
         <div className="flex items-center justify-between">
           <span className="text-white/30 text-[10px] md:text-xs font-medium">Resultado</span>
@@ -63,6 +440,8 @@ function ScenarioCard({ title, subtitle, result, resultColor, items }) {
   )
 }
 
+/* ─── MAIN PAGE ─── */
+
 export default function StrategyPage() {
   const communityLink = import.meta.env.VITE_COMMUNITY_LINK || '#'
 
@@ -70,7 +449,10 @@ export default function StrategyPage() {
     <div className="min-h-screen bg-[#060608] text-white">
       <div className="max-w-5xl mx-auto px-3 py-6 md:px-8 md:py-16">
 
-        {/* Hero */}
+        {/* Creator Hero */}
+        <CreatorHero />
+
+        {/* Strategy Hero */}
         <div className="text-center mb-6 md:mb-16">
           <div className="inline-flex items-center gap-1.5 bg-[#00ff87]/[0.08] border border-[#00ff87]/15 px-3 py-1.5 md:px-4 md:py-2 rounded-full mb-4 md:mb-6">
             <Trophy className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#00ff87]" />
@@ -108,77 +490,12 @@ export default function StrategyPage() {
           <CandlestickDiagram />
         </div>
 
-        {/* Fluxo passo a passo */}
-        <div className="mb-6 md:mb-16">
-          <h2 className="text-white/20 text-[9px] md:text-xs font-semibold uppercase tracking-[0.2em] mb-3 md:mb-8 text-center">Passo a passo</h2>
+        {/* Interactive Strategy Stepper */}
+        <StrategyStepper />
 
-          <div className="flex flex-col gap-2 md:gap-4">
-            <FlowStep
-              number={1}
-              icon={Target}
-              color="#00ff87"
-              title="Identifique o sinal"
-              description="No gráfico de 60 minutos, observe se a vela atual fechou positiva (verde). Esse fechamento habilita a operação na vela seguinte."
-              details={[
-                { text: 'Vela verde = Sinal ativo' },
-                { text: 'Vela vermelha = Sem operação', color: '#ff4757' },
-              ]}
-            />
-
-            <div className="flex justify-center">
-              <ArrowDown className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/10" />
-            </div>
-
-            <FlowStep
-              number={2}
-              icon={TrendingDown}
-              color="#ffa502"
-              title="Aguarde o gatilho"
-              description="Na vela seguinte, espere o preço cair 200 pontos a partir da abertura. Quando atingir, inicie a venda a descoberto."
-              details={[
-                { text: 'Gatilho: -200 pontos da abertura' },
-              ]}
-            />
-
-            <div className="flex justify-center">
-              <ArrowDown className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/10" />
-            </div>
-
-            <FlowStep
-              number={3}
-              icon={Target}
-              color="#00ff87"
-              title="Alvo do Alaska"
-              description="Com a venda a descoberto aberta, o alvo é de 100 pontos de lucro. Se o mercado continuar caindo, você realiza o ganho rapidamente."
-              details={[
-                { text: 'Alvo: +100 pontos' },
-                { text: 'Stop: 400 pontos', color: '#ff4757' },
-              ]}
-            />
-
-            <div className="flex justify-center">
-              <ArrowDown className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/10" />
-            </div>
-
-            <FlowStep
-              number={4}
-              icon={Shield}
-              color="#3b82f6"
-              title="Square — O plano B"
-              description="Se o preço recuar 150 pontos contra a posição sem atingir o alvo, entra o SQUARE com 3x o lote. O stop é o mesmo do Alaska."
-              details={[
-                { text: 'Entrada: +150 pts contra' },
-                { text: 'Lote: 3x o Alaska' },
-                { text: 'Alvo: +120 pontos' },
-              ]}
-            />
-          </div>
-        </div>
-
-        {/* Cenarios de resultado */}
+        {/* Cenários de resultado */}
         <div className="mb-6 md:mb-16">
           <h2 className="text-white/20 text-[9px] md:text-xs font-semibold uppercase tracking-[0.2em] mb-3 md:mb-8 text-center">Cenários de resultado</h2>
-
           <div className="flex flex-col md:flex-row gap-2 md:gap-4">
             <ScenarioCard
               title="Cenário A"
@@ -192,11 +509,9 @@ export default function StrategyPage() {
                 { label: 'Square?', value: 'Não' },
               ]}
             />
-
             <div className="flex items-center justify-center py-1 md:py-0">
               <span className="text-white/10 text-[10px] md:text-xs font-semibold">OU</span>
             </div>
-
             <ScenarioCard
               title="Cenário B"
               subtitle="Com Square — preço médio"
@@ -212,7 +527,7 @@ export default function StrategyPage() {
           </div>
         </div>
 
-        {/* Regra de invalidacao */}
+        {/* Regra de invalidação */}
         <div className="mb-6 md:mb-16">
           <div className="relative overflow-hidden bg-[#ff4757]/[0.04] border border-[#ff4757]/10 rounded-xl md:rounded-2xl p-3.5 md:p-8">
             <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-[#ff4757] to-transparent opacity-30" />
@@ -230,106 +545,73 @@ export default function StrategyPage() {
           </div>
         </div>
 
-        {/* Sobre o Criador */}
-        <div className="relative overflow-hidden bg-white/[0.02] border border-white/[0.04] rounded-xl md:rounded-2xl p-4 md:p-8 mb-6 md:mb-16">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.01] to-transparent pointer-events-none" />
+        {/* Feedbacks — Prova Social */}
+        <div className="mb-6 md:mb-16">
+          <h2 className="text-white/20 text-[9px] md:text-xs font-semibold uppercase tracking-[0.2em] mb-3 md:mb-8 text-center">O que dizem os membros</h2>
 
-          <div className="flex items-center gap-2 md:gap-3 mb-5 md:mb-8 relative">
-            <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-[#00ff87]/10 flex items-center justify-center">
-              <User className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff87]" />
-            </div>
-            <span className="text-white font-semibold text-sm">Quem criou a estratégia</span>
-          </div>
-
-          <div className="flex flex-col md:flex-row gap-5 md:gap-8 relative">
-            {/* Foto */}
-            <div className="flex flex-col items-center md:items-start shrink-0">
-              <div className="relative">
-                <div className="w-28 h-28 md:w-40 md:h-40 rounded-2xl md:rounded-3xl overflow-hidden border-2 border-white/[0.06]">
-                  <img
-                    src="/criador.png"
-                    alt="Fabrício Gonçalvez"
-                    className="w-full h-full object-cover"
-                  />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
+            {[
+              {
+                name: 'Rafael M.',
+                role: 'Day Trader',
+                text: 'Entrei na comunidade sem acreditar muito, mas já no primeiro mês vi a consistência do setup. A taxa de acerto é real.',
+                stars: 5,
+              },
+              {
+                name: 'Lucas S.',
+                role: 'Operador de Mini Índice',
+                text: 'O Square é genial. Quando o Alaska não vai, o plano B salva a operação. Nunca vi um gerenciamento de risco tão bem pensado.',
+                stars: 5,
+              },
+              {
+                name: 'Ana P.',
+                role: 'Trader Iniciante',
+                text: 'Comecei do zero e em 3 meses já estava operando com confiança. O passo a passo é claro e o Fabrício explica tudo no grupo.',
+                stars: 5,
+              },
+              {
+                name: 'Marcos T.',
+                role: 'Investidor',
+                text: 'Opero há 8 anos e nunca achei algo tão objetivo. Sem enrolação, sem indicador mágico. É setup, entrada e saída.',
+                stars: 5,
+              },
+              {
+                name: 'Fernanda R.',
+                role: 'Swing Trader',
+                text: 'A comunidade é muito ativa. O Fabrício avisa antes das operações e faz questão de explicar cada decisão.',
+                stars: 5,
+              },
+              {
+                name: 'Diego C.',
+                role: 'Day Trader',
+                text: 'Saí de um curso de R$5.000 que não me ensinou nada e achei a Alaska & Square de graça. Irônico, mas funciona de verdade.',
+                stars: 5,
+              },
+            ].map((f, i) => (
+              <div
+                key={i}
+                className="relative overflow-hidden bg-white/[0.02] border border-white/[0.04] rounded-xl md:rounded-2xl p-3.5 md:p-5 group hover:bg-white/[0.03] transition-all duration-300"
+              >
+                <div className="flex items-center gap-2.5 mb-2.5 md:mb-3">
+                  <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-[#00ff87]/[0.08] flex items-center justify-center">
+                    <span className="text-[#00ff87] font-bold text-[10px] md:text-[11px]">{f.name.charAt(0)}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-white font-semibold text-[11px] md:text-[13px] block">{f.name}</span>
+                    <span className="text-white/20 text-[9px] md:text-[10px]">{f.role}</span>
+                  </div>
+                  <MessageCircle className="w-3.5 h-3.5 text-white/10 shrink-0" />
                 </div>
-                <div className="absolute -bottom-1.5 -right-1.5 md:-bottom-2 md:-right-2 w-7 h-7 md:w-9 md:h-9 bg-[#00ff87] rounded-lg md:rounded-xl flex items-center justify-center">
-                  <span className="text-black font-black text-[10px] md:text-xs">A</span>
-                </div>
-              </div>
-              <h3 className="text-white font-bold text-sm md:text-lg mt-3 md:mt-4 text-center md:text-left">Fabrício Gonçalvez</h3>
-              <p className="text-white/25 text-[9px] md:text-[11px] uppercase tracking-wider text-center md:text-left">Criador do Alaska & Square</p>
 
-              <div className="flex gap-2 mt-2.5 md:mt-3">
-                <div className="bg-white/[0.03] border border-white/[0.06] px-2 py-1 md:px-2.5 md:py-1.5 rounded-lg">
-                  <span className="text-white/40 text-[8px] md:text-[9px] uppercase tracking-wider block">No mercado desde</span>
-                  <span className="text-white font-bold text-[11px] md:text-xs">2006</span>
+                <div className="flex gap-0.5 mb-2">
+                  {Array.from({ length: f.stars }).map((_, si) => (
+                    <Star key={si} className="w-2.5 h-2.5 md:w-3 md:h-3 text-[#ffa502] fill-[#ffa502]" />
+                  ))}
                 </div>
-                <div className="bg-white/[0.03] border border-white/[0.06] px-2 py-1 md:px-2.5 md:py-1.5 rounded-lg">
-                  <span className="text-white/40 text-[8px] md:text-[9px] uppercase tracking-wider block">Formação</span>
-                  <span className="text-white font-bold text-[11px] md:text-xs">Ciências Contábeis</span>
-                </div>
-              </div>
-            </div>
 
-            {/* História */}
-            <div className="flex-1 flex flex-col gap-3 md:gap-4">
-              <div className="bg-white/[0.02] border border-white/[0.04] rounded-xl p-3 md:p-4">
-                <div className="flex items-center gap-2 mb-1.5 md:mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#ffa502]" />
-                  <span className="text-white/30 text-[9px] md:text-[10px] uppercase tracking-wider font-semibold">A origem</span>
-                </div>
-                <p className="text-white/45 text-[11px] md:text-sm leading-relaxed">
-                  A trajetória de Fabrício começou longe das telas e dos gráficos. Antes de se consolidar no trading, sua realidade envolvia trabalhos informais e a busca por independência financeira desde cedo — incluindo períodos em que vendeu picolés em estádios para se sustentar.
-                </p>
+                <p className="text-white/35 text-[10px] md:text-[12px] leading-relaxed">"{f.text}"</p>
               </div>
-
-              <div className="bg-white/[0.02] border border-white/[0.04] rounded-xl p-3 md:p-4">
-                <div className="flex items-center gap-2 mb-1.5 md:mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#00ff87]" />
-                  <span className="text-white/30 text-[9px] md:text-[10px] uppercase tracking-wider font-semibold">A descoberta</span>
-                </div>
-                <p className="text-white/45 text-[11px] md:text-sm leading-relaxed">
-                  O interesse pelo mercado surgiu durante a formação em Ciências Contábeis. Foi nesse período que teve o primeiro contato com a bolsa de valores — experiência que mudaria o rumo da sua carreira. A partir daí, passou a conciliar estudos, trabalho e as primeiras operações.
-                </p>
-              </div>
-
-              <div className="bg-white/[0.02] border border-white/[0.04] rounded-xl p-3 md:p-4">
-                <div className="flex items-center gap-2 mb-1.5 md:mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#3b82f6]" />
-                  <span className="text-white/30 text-[9px] md:text-[10px] uppercase tracking-wider font-semibold">A evolução</span>
-                </div>
-                <p className="text-white/45 text-[11px] md:text-sm leading-relaxed">
-                  Presente no mercado desde 2006, construiu sua trajetória de forma gradual, passando de investidor autônomo para uma atuação mais ativa após a crise do subprime — momento que marcou uma mudança importante na sua forma de encarar o mercado e que, eventualmente, levou à criação da estratégia Alaska & Square.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Resumo final */}
-        <div className="relative overflow-hidden bg-white/[0.02] border border-white/[0.04] rounded-xl md:rounded-2xl p-5 md:p-10 text-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#00ff87]/[0.02] to-[#3b82f6]/[0.01] pointer-events-none" />
-          <div className="relative">
-            <div className="w-12 h-12 md:w-20 md:h-20 rounded-xl md:rounded-3xl bg-[#00ff87]/10 flex items-center justify-center mx-auto mb-3 md:mb-5">
-              <Trophy className="w-5 h-5 md:w-9 md:h-9 text-[#00ff87]" />
-            </div>
-            <h3 className="text-white font-black text-base md:text-2xl mb-1 md:mb-2">89% de acerto</h3>
-            <p className="text-white/25 text-[10px] md:text-sm mb-4 md:mb-6">Desde 2018, operando mini índice Ibovespa</p>
-
-            <div className="flex justify-center gap-6 md:gap-10">
-              <div>
-                <span className="text-[#00ff87] text-xl md:text-3xl font-black block">100</span>
-                <span className="text-white/20 text-[8px] md:text-xs uppercase tracking-wider">pts Alaska</span>
-              </div>
-              <div>
-                <span className="text-[#3b82f6] text-xl md:text-3xl font-black block">120</span>
-                <span className="text-white/20 text-[8px] md:text-xs uppercase tracking-wider">pts Square</span>
-              </div>
-              <div>
-                <span className="text-[#ff4757] text-xl md:text-3xl font-black block">400</span>
-                <span className="text-white/20 text-[8px] md:text-xs uppercase tracking-wider">pts stop</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 

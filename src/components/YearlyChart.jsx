@@ -44,14 +44,14 @@ export default function YearlyChart({ trades }) {
   if (data.length === 0) return null
 
   return (
-    <div className="relative overflow-hidden bg-white/[0.02] backdrop-blur border border-white/[0.04] rounded-2xl p-4 md:p-6">
+    <div className="relative overflow-hidden bg-white/[0.02] backdrop-blur border border-white/[0.04] rounded-xl md:rounded-2xl p-3.5 md:p-6">
       <div className="absolute inset-0 bg-gradient-to-b from-[#00ff87]/[0.01] to-transparent pointer-events-none" />
 
-      <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6 relative">
+      <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-6 relative">
         <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-[#00ff87]/10 flex items-center justify-center">
           <CalendarDays className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff87]" />
         </div>
-        <span className="text-white font-semibold text-sm">Resultado por Ano</span>
+        <span className="text-white font-semibold text-[13px] md:text-sm">Resultado por Ano</span>
       </div>
 
       <ResponsiveContainer width="100%" height={window.innerWidth < 768 ? 220 : 280}>

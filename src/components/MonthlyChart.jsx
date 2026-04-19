@@ -56,15 +56,15 @@ export default function MonthlyChart({ trades }) {
   if (data.length === 0) return null
 
   return (
-    <div className="relative overflow-hidden bg-white/[0.02] backdrop-blur border border-white/[0.04] rounded-2xl p-4 md:p-6">
+    <div className="relative overflow-hidden bg-white/[0.02] backdrop-blur border border-white/[0.04] rounded-xl md:rounded-2xl p-3.5 md:p-6">
       <div className="absolute inset-0 bg-gradient-to-b from-[#00ff87]/[0.01] to-transparent pointer-events-none" />
 
-      <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6 relative flex-wrap">
+      <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-6 relative flex-wrap">
         <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-[#00ff87]/10 flex items-center justify-center">
           <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff87]" />
         </div>
-        <span className="text-white font-semibold text-sm">Resultado por Mês</span>
-        <span className="text-white/15 text-[9px] md:text-[10px] ml-1 md:ml-2 uppercase tracking-wider">acumulado de todos os anos</span>
+        <span className="text-white font-semibold text-[13px] md:text-sm">Resultado por Mês</span>
+        <span className="text-white/15 text-[8px] md:text-[10px] ml-0 md:ml-2 uppercase tracking-wider w-full md:w-auto">acumulado de todos os anos</span>
       </div>
 
       <ResponsiveContainer width="100%" height={window.innerWidth < 768 ? 220 : 300}>
