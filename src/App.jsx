@@ -25,14 +25,17 @@ function ResultsSkeleton() {
   )
 }
 
-// Um destaque por página, na tinta: o lucro total.
+// Um destaque por página: o lucro total, tingido pelo sinal.
 function TotalCard({ stats }) {
+  const positive = stats.totalProfit >= 0
   return (
-    <section className="rounded-panel bg-foreground p-5 text-background md:p-6">
-      <p className="text-footnote opacity-75">Lucro total</p>
-      <p className="mt-1 text-large-title font-bold tabular-nums">{brl(stats.totalProfit)}</p>
+    <section className={`rounded-panel p-5 md:p-6 ${positive ? 'tint-success' : 'tint-destructive'}`}>
+      <p className="text-footnote text-muted">Lucro total</p>
+      <p className={`mt-1 text-large-title font-bold tabular-nums ${positive ? 'text-success' : 'text-destructive'}`}>
+        {brl(stats.totalProfit)}
+      </p>
       {stats.firstDate && (
-        <p className="mt-2 text-footnote tabular-nums opacity-75">
+        <p className="mt-2 text-footnote text-muted tabular-nums">
           De {dateBR(stats.firstDate)} a {dateBR(stats.lastDate)}
         </p>
       )}

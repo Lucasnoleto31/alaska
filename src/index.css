@@ -1,10 +1,12 @@
 @import "tailwindcss";
 
 /*
-  FICHA DO PROJETO: ficha padrão do kit (Midiakit/ficha-padrao.md).
-  Monocromático, Poppins, a tinta faz o destaque. O verde do monograma FG
-  (matiz 142) entra só no detalhe: logo, botão principal e foco. Por isso os
-  neutros carregam a matiz dele com saturação baixa (bloco 1 do kit).
+  FICHA DO PROJETO: ficha padrão do kit (Midiakit/ficha-padrao.md), com cor.
+  Poppins, neutros com a matiz do verde do monograma FG (142). A pedido do
+  Lucas em 13/10/2026, o verde do FG virou o acento da página e o resultado
+  ganhou cor: verde para lucro, vermelho para prejuízo, âmbar para atenção.
+  Em cada tema há a cor de TEXTO (contraste de 4,5:1 sobre card e célula
+  tingida) e a de PREENCHIMENTO (barra, área, célula), que pode ser mais viva.
   Para trocar de identidade, mude os VALORES abaixo, não os nomes.
 */
 :root {
@@ -22,9 +24,12 @@
   --muted-foreground: #4C5D52;
   --subtle: #738278;
   --border: #DFE7E2;
-  --success: #2E6F40;
+  --success: #147236;
+  --success-fill: #2EC464;
   --warning: #A14A17;
-  --destructive: #B22222;
+  --warning-fill: #E8962A;
+  --destructive: #B71C1C;
+  --destructive-fill: #E5484D;
   --focus: #1F8A46;
 
   --chart-grid: rgb(17 17 17 / 0.09);
@@ -42,9 +47,12 @@
     --muted-foreground: #94A89C;
     --subtle: #738278;
     --border: #212C25;
-    --success: #31C47F;
+    --success: #2EC464;
+    --success-fill: #2EC464;
     --warning: #F6A823;
-    --destructive: #E45858;
+    --warning-fill: #F6A823;
+    --destructive: #F27370;
+    --destructive-fill: #F27370;
     --focus: var(--brand);
 
     --chart-grid: rgb(255 255 255 / 0.07);
@@ -100,8 +108,11 @@
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-success: var(--success);
+  --color-success-fill: var(--success-fill);
   --color-warning: var(--warning);
+  --color-warning-fill: var(--warning-fill);
   --color-destructive: var(--destructive);
+  --color-destructive-fill: var(--destructive-fill);
 
   /* escala de raio: base 10 no controle */
   --radius-sheet: 16px;
@@ -203,4 +214,18 @@ input[type='date'] {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Card tingido pelo sinal do resultado: lucro em verde, prejuízo em vermelho. */
+@utility tint-success {
+  background: color-mix(in srgb, var(--success-fill) 12%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--success-fill) 28%, transparent);
+}
+@utility tint-destructive {
+  background: color-mix(in srgb, var(--destructive-fill) 12%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--destructive-fill) 28%, transparent);
+}
+@utility tint-brand {
+  background: color-mix(in srgb, var(--brand) 12%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--brand) 28%, transparent);
 }

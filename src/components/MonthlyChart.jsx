@@ -59,6 +59,7 @@ export default function MonthlyChart({ trades }) {
         title="Resultado por mês"
         caption="Soma de todos os anos"
         aside={brlSigned(best.value)}
+        asideClassName={signClass(best.value)}
         asideCaption={`melhor mês, ${best.name.toLowerCase()}`}
       />
 
@@ -66,8 +67,8 @@ export default function MonthlyChart({ trades }) {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: 0 }}>
             <defs>
-              {barGradient('month-pos', 0.95)}
-              {barGradient('month-neg', 0.45, true)}
+              {barGradient('month-pos', 'var(--success-fill)')}
+              {barGradient('month-neg', 'var(--destructive-fill)', true)}
             </defs>
             <CartesianGrid {...gridProps} />
             <ReferenceLine y={0} stroke="var(--border)" />

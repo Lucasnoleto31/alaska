@@ -23,15 +23,13 @@ export const axisProps = {
 export const tooltipCursor = { fill: 'var(--chart-track)' }
 
 // Gradiente vertical da barra: da ponta que recebe luz (opacidade .95) até a
-// outra (.32), escalado pela intensidade da faixa (bom .95, ruim .45). Na barra
-// negativa a ponta de luz fica embaixo.
-export function barGradient(id, intensity, flip = false) {
-  const top = intensity
-  const bottom = intensity * (0.32 / 0.95)
+// outra (.32). Lucro na cor de lucro, prejuízo na de prejuízo, com a ponta de
+// luz embaixo.
+export function barGradient(id, color, flip = false) {
   return (
     <linearGradient key={id} id={id} x1="0" y1={flip ? '1' : '0'} x2="0" y2={flip ? '0' : '1'}>
-      <stop offset="0%" stopColor="var(--foreground)" stopOpacity={top} />
-      <stop offset="100%" stopColor="var(--foreground)" stopOpacity={bottom} />
+      <stop offset="0%" stopColor={color} stopOpacity={0.95} />
+      <stop offset="100%" stopColor={color} stopOpacity={0.32} />
     </linearGradient>
   )
 }

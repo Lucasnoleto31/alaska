@@ -54,6 +54,7 @@ export default function YearlyChart({ trades }) {
         title="Resultado por ano"
         caption={`${data.length} ${data.length === 1 ? 'ano' : 'anos'}`}
         aside={brlSigned(best.value)}
+        asideClassName={signClass(best.value)}
         asideCaption={`melhor ano, ${best.label}`}
       />
 
@@ -61,8 +62,8 @@ export default function YearlyChart({ trades }) {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: 0 }}>
             <defs>
-              {barGradient('year-pos', 0.95)}
-              {barGradient('year-neg', 0.45, true)}
+              {barGradient('year-pos', 'var(--success-fill)')}
+              {barGradient('year-neg', 'var(--destructive-fill)', true)}
             </defs>
             <CartesianGrid {...gridProps} />
             <ReferenceLine y={0} stroke="var(--border)" />

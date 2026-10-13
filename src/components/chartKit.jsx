@@ -16,7 +16,7 @@ export function TooltipBox({ title, rows }) {
   )
 }
 
-export function PanelHeader({ title, caption, aside, asideCaption }) {
+export function PanelHeader({ title, caption, aside, asideCaption, asideClassName = '' }) {
   return (
     <div className="mb-4 flex items-start justify-between gap-4 md:mb-5">
       <div className="min-w-0">
@@ -25,7 +25,7 @@ export function PanelHeader({ title, caption, aside, asideCaption }) {
       </div>
       {aside && (
         <div className="shrink-0 text-right">
-          <p className="text-headline font-semibold tabular-nums">{aside}</p>
+          <p className={`text-headline font-semibold tabular-nums ${asideClassName}`}>{aside}</p>
           {asideCaption && <p className="mt-0.5 text-footnote text-muted">{asideCaption}</p>}
         </div>
       )}

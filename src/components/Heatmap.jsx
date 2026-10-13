@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { brlSigned, int, signedCompact } from '../lib/format'
 import { PanelHeader } from './chartKit'
+import { signClass } from '../lib/chart'
 
 const WEEKDAYS = ['Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta']
 const WEEKDAY_SHORT = { Segunda: 'Seg', Terca: 'Ter', Quarta: 'Qua', Quinta: 'Qui', Sexta: 'Sex' }
@@ -15,18 +16,18 @@ function getWeekday(dateStr) {
   return date.getUTCDay()
 }
 
-// Cor por intensidade, não por matiz: o lucro preenche a célula na tinta,
-// mais forte quanto maior. O prejuízo não preenche; o sinal e a cor ficam no número.
-// Teto de 18%: acima disso o "op." apagado cai abaixo de 4,5:1 sobre a célula.
-function cellStyle(value, maxPositive) {
-  if (value === null || value <= 0 || maxPositive === 0) return undefined
-  const intensity = Math.min(value / maxPositive, 1)
-  const alpha = 0.04 + intensity * 0.14
-  return { backgroundColor: `color-mix(in srgb, var(--foreground) ${(alpha * 100).toFixed(1)}%, var(--background))` }
+// Lucro tinge a célula de verde, prejuízo de vermelho, mais forte quanto maior.
+// Teto de 20%: acima disso o número e o "op." caem abaixo de 4,5:1 na célula.
+function cellStyle(value, maxAbs) {
+  if (value === null || value === 0 || maxAbs === 0) return undefined
+  const intensity = Math.min(Math.abs(value) / maxAbs, 1)
+  const pct = (5 + intensity * 15).toFixed(1)
+  const color = value > 0 ? 'var(--success-fill)' : 'var(--destructive-fill)'
+  return { backgroundColor: `color-mix(in srgb, ${color} ${pct}%, var(--background))` }
 }
 
 export default function Heatmap({ trades }) {
-  const { grid, maxPositive, weakest, hours } = useMemo(() => {
+  const { grid, maxAbs, weakest, hours } = useMemo(() => {
     const map = {}
     trades.forEach((trade) => {
       const dayOfWeek = getWeekday(trade.data)
@@ -44,15 +45,15 @@ export default function Heatmap({ trades }) {
       map[key].total += Number(trade.resultado)
       map[key].count += 1
     })
-    let maxPositive = 0
+    let maxAbs = 0
     let weakest = null
     Object.values(map).forEach((v) => {
-      if (v.total > maxPositive) maxPositive = v.total
+      if (Math.abs(v.total) > maxAbs) maxAbs = Math.abs(v.total)
       if (!weakest || v.total < weakest.total) weakest = v
     })
     // Horário sem nenhuma operação não ocupa linha
     const hours = HOURS.filter((h) => WEEKDAYS.some((d) => map[`${d}-${h}`]))
-    return { grid: map, maxPositive, weakest, hours }
+    return { grid: map, maxAbs, weakest, hours }
   }, [trades])
 
   if (trades.length === 0) return null
@@ -63,6 +64,7 @@ export default function Heatmap({ trades }) {
         title="Dia e horário de entrada"
         caption="Soma em reais e número de operações"
         aside={weakest ? brlSigned(weakest.total) : null}
+        asideClassName={weakest ? signClass(weakest.total) : ''}
         asideCaption={weakest ? `ponto fraco, ${WEEKDAY_LONG[weakest.day]} ${Number(weakest.hour)}h` : null}
       />
 
@@ -93,12 +95,12 @@ export default function Heatmap({ trades }) {
                     <td
                       key={day}
                       className="h-12 rounded-cell bg-background px-0.5 text-center md:h-14"
-                      style={cellStyle(value, maxPositive)}
+                      style={cellStyle(value, maxAbs)}
                       title={cell ? `${WEEKDAY_LONG[day]}, ${Number(hour)}h: ${brlSigned(value)} em ${int(cell.count)} operações` : undefined}
                     >
                       {cell ? (
                         <>
-                          <span className={`block text-caption font-semibold leading-tight ${value < 0 ? 'text-destructive' : 'text-foreground'}`}>
+                          <span className={`block text-caption font-semibold leading-tight ${signClass(value)}`}>
                             {signedCompact(value)}
                           </span>
                           <span className="block text-caption-2 text-muted">{int(cell.count)} op.</span>

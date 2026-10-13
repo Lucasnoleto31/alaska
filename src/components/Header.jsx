@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Users, BookOpen, BarChart3 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
+import { COMMUNITY_URL } from '../lib/links'
 
 const NAV = [
   { to: '/', label: 'Estratégia', icon: BookOpen },
@@ -28,14 +29,13 @@ function ScrollProgress() {
   return (
     <div
       aria-hidden
-      className="absolute left-0 top-0 h-0.5 w-full origin-left bg-foreground"
+      className="absolute left-0 top-0 h-0.5 w-full origin-left bg-brand"
       style={{ transform: `scaleX(${progress})` }}
     />
   )
 }
 
 export default function Header() {
-  const communityLink = import.meta.env.VITE_COMMUNITY_LINK || '#'
   const { pathname } = useLocation()
   const [scrolled, setScrolled] = useState(false)
 
@@ -80,7 +80,7 @@ export default function Header() {
         </nav>
 
         <a
-          href={communityLink}
+          href={COMMUNITY_URL}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Entrar na comunidade"
