@@ -1,35 +1,36 @@
 import { useMemo } from 'react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
-import { CalendarDays } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, ReferenceLine } from 'recharts'
+import { useReducedMotion } from '../hooks/useReducedMotion'
+import { brlCompact, brlSigned, int, pct } from '../lib/format'
+import { PanelHeader, TooltipBox } from './chartKit'
+import { axisProps, barGradient, gridProps, signClass, tooltipCursor } from '../lib/chart'
 
-function CustomTooltip({ active, payload }) {
+function YearTooltip({ active, payload }) {
   if (!active || !payload?.length) return null
-  const data = payload[0].payload
+  const d = payload[0].payload
   return (
-    <div className="bg-[#0c0c10]/95 backdrop-blur-xl border border-white/[0.06] rounded-2xl p-3 md:p-4 shadow-2xl shadow-black/60">
-      <p className="text-white/30 text-[10px] md:text-[11px] font-medium mb-2">{data.label}</p>
-      <div className="flex items-center justify-between gap-4 md:gap-6">
-        <span className="text-white/40 text-[11px] md:text-xs">Resultado</span>
-        <span className={`text-xs md:text-sm font-bold ${data.value >= 0 ? 'text-[#00ff87]' : 'text-[#ff4757]'}`}>
-          {data.value >= 0 ? '+' : ''}R$ {data.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-        </span>
-      </div>
-      <div className="flex items-center justify-between gap-4 md:gap-6 mt-1">
-        <span className="text-white/40 text-[11px] md:text-xs">Operações</span>
-        <span className="text-white text-[11px] md:text-xs font-medium">{data.count}</span>
-      </div>
-    </div>
+    <TooltipBox
+      title={d.label}
+      rows={[
+        { label: 'Resultado', value: brlSigned(d.value), className: signClass(d.value) },
+        { label: 'Operações', value: int(d.count) },
+        { label: 'Acerto', value: `${pct(d.winRate)} · ${int(d.wins)} de ${int(d.count)}` },
+      ]}
+    />
   )
 }
 
 export default function YearlyChart({ trades }) {
+  const reducedMotion = useReducedMotion()
+
   const data = useMemo(() => {
     const map = {}
     trades.forEach((trade) => {
       const year = String(trade.data).substring(0, 4)
-      if (!map[year]) map[year] = { total: 0, count: 0 }
+      if (!map[year]) map[year] = { total: 0, count: 0, wins: 0 }
       map[year].total += Number(trade.resultado)
       map[year].count += 1
+      if (Number(trade.resultado) > 0) map[year].wins += 1
     })
 
     return Object.keys(map)
@@ -38,50 +39,50 @@ export default function YearlyChart({ trades }) {
         label: year,
         value: Number(map[year].total.toFixed(2)),
         count: map[year].count,
+        wins: map[year].wins,
+        winRate: (map[year].wins / map[year].count) * 100,
       }))
   }, [trades])
 
   if (data.length === 0) return null
 
+  const best = data.reduce((a, b) => (b.value > a.value ? b : a))
+
   return (
-    <div className="relative overflow-hidden bg-white/[0.02] backdrop-blur border border-white/[0.04] rounded-xl md:rounded-2xl p-3.5 md:p-6">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#00ff87]/[0.01] to-transparent pointer-events-none" />
+    <section className="panel p-5 md:p-6">
+      <PanelHeader
+        title="Resultado por ano"
+        caption={`${data.length} ${data.length === 1 ? 'ano' : 'anos'}`}
+        aside={brlSigned(best.value)}
+        asideCaption={`melhor ano, ${best.label}`}
+      />
 
-      <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-6 relative">
-        <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-[#00ff87]/10 flex items-center justify-center">
-          <CalendarDays className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff87]" />
-        </div>
-        <span className="text-white font-semibold text-[13px] md:text-sm">Resultado por Ano</span>
+      <div className="-ml-2 h-56 md:ml-0 md:h-72">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: 0 }}>
+            <defs>
+              {barGradient('year-pos', 0.95)}
+              {barGradient('year-neg', 0.45, true)}
+            </defs>
+            <CartesianGrid {...gridProps} />
+            <ReferenceLine y={0} stroke="var(--border)" />
+            <XAxis dataKey="label" {...axisProps} />
+            <YAxis {...axisProps} tickFormatter={brlCompact} width="auto" />
+            <Tooltip content={<YearTooltip />} cursor={tooltipCursor} />
+            <Bar
+              dataKey="value"
+              radius={[6, 6, 0, 0]}
+              maxBarSize={48}
+              background={{ fill: 'var(--chart-track)', radius: 6 }}
+              isAnimationActive={!reducedMotion}
+            >
+              {data.map((entry) => (
+                <Cell key={entry.label} fill={entry.value >= 0 ? 'url(#year-pos)' : 'url(#year-neg)'} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
       </div>
-
-      <ResponsiveContainer width="100%" height={window.innerWidth < 768 ? 220 : 280}>
-        <BarChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-          <XAxis
-            dataKey="label"
-            tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: window.innerWidth < 768 ? 10 : 12, fontWeight: 600 }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fill: 'rgba(255,255,255,0.15)', fontSize: 10 }}
-            axisLine={false}
-            tickLine={false}
-            tickFormatter={(v) => `R$${v}`}
-            width={window.innerWidth < 768 ? 50 : 70}
-          />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
-          <Bar dataKey="value" radius={[8, 8, 0, 0]} maxBarSize={60}>
-            {data.map((entry, i) => (
-              <Cell
-                key={i}
-                fill={entry.value >= 0 ? '#00ff87' : '#ff4757'}
-                fillOpacity={0.8}
-              />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+    </section>
   )
 }

@@ -29,37 +29,41 @@ export function useTrades() {
   })
 
   useEffect(() => {
-    fetchTrades()
-  }, [])
+    let cancelled = false
 
-  async function fetchTrades() {
-    setLoading(true)
-    const PAGE_SIZE = 1000
-    let allTrades = []
-    let from = 0
-    let hasMore = true
+    async function fetchTrades() {
+      const PAGE_SIZE = 1000
+      let allTrades = []
+      let from = 0
+      let hasMore = true
 
-    while (hasMore) {
-      const { data, error } = await supabase
-        .from('trades')
-        .select('*')
-        .eq('robo', 'alaska-&-square')
-        .order('data', { ascending: true })
-        .range(from, from + PAGE_SIZE - 1)
+      while (hasMore) {
+        const { data, error } = await supabase
+          .from('trades')
+          .select('*')
+          .eq('robo', 'alaska-&-square')
+          .order('data', { ascending: true })
+          .order('hora', { ascending: true })
+          .range(from, from + PAGE_SIZE - 1)
 
-      if (error) {
-        console.error('Erro ao buscar trades:', error)
-        break
+        if (error) {
+          console.error('Erro ao buscar trades:', error)
+          break
+        }
+
+        allTrades = allTrades.concat(data)
+        from += PAGE_SIZE
+        hasMore = data.length === PAGE_SIZE
       }
 
-      allTrades = allTrades.concat(data)
-      from += PAGE_SIZE
-      hasMore = data.length === PAGE_SIZE
+      if (cancelled) return
+      setTrades(allTrades)
+      setLoading(false)
     }
 
-    setTrades(allTrades)
-    setLoading(false)
-  }
+    fetchTrades()
+    return () => { cancelled = true }
+  }, [])
 
   const periodLimit = useMemo(() => {
     const now = new Date()
@@ -115,24 +119,27 @@ export function useTrades() {
   }, [trades, filters, periodLimit])
 
   const equityCurve = useMemo(() => {
+    const curve = []
     let cumulative = 0
-    return filteredTrades.map((trade, index) => {
+    for (const [index, trade] of filteredTrades.entries()) {
       cumulative += Number(trade.resultado)
-      const dateStr = String(trade.data).substring(0, 10)
-      const [y, m, d] = dateStr.split('-')
-      return {
+      curve.push({
         index: index + 1,
         profit: Number(trade.resultado),
         cumulative: Number(cumulative.toFixed(2)),
-        date: `${d}/${m}/${y}`,
+        iso: String(trade.data).substring(0, 10),
         time: trade.hora || '',
-      }
-    })
+      })
+    }
+    return curve
   }, [filteredTrades])
 
   const stats = useMemo(() => {
     if (filteredTrades.length === 0) {
-      return { totalTrades: 0, totalProfit: 0, winRate: 0, wins: 0, losses: 0, maxDrawdown: 0, profitFactor: 0 }
+      return {
+        totalTrades: 0, totalProfit: 0, winRate: 0, wins: 0, losses: 0, maxDrawdown: 0, profitFactor: 0,
+        grossProfit: 0, grossLoss: 0, avgTrade: 0, firstDate: '', lastDate: '',
+      }
     }
 
     const wins = filteredTrades.filter((t) => Number(t.resultado) > 0)
@@ -159,6 +166,11 @@ export function useTrades() {
       losses: losses.length,
       maxDrawdown: Number(maxDrawdown.toFixed(2)),
       profitFactor: grossLoss === 0 ? grossProfit : Number((grossProfit / grossLoss).toFixed(2)),
+      grossProfit: Number(grossProfit.toFixed(2)),
+      grossLoss: Number(grossLoss.toFixed(2)),
+      avgTrade: Number((totalProfit / filteredTrades.length).toFixed(2)),
+      firstDate: String(filteredTrades[0].data).substring(0, 10),
+      lastDate: String(filteredTrades[filteredTrades.length - 1].data).substring(0, 10),
     }
   }, [filteredTrades])
 

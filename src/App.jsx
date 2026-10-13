@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 import Header from './components/Header'
 import StatsCards from './components/StatsCards'
 import Filters from './components/Filters'
@@ -8,97 +9,34 @@ import MonthlyChart from './components/MonthlyChart'
 import Heatmap from './components/Heatmap'
 import StrategyPage from './pages/StrategyPage'
 import { useTrades } from './hooks/useTrades'
-import { Loader2, TrendingUp, CandlestickChart, Info } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
+import { brl, dateBR } from './lib/format'
 
-function AnimatedNumber({ value, prefix = '', suffix = '', color = 'text-white', duration = 2000 }) {
-  const [display, setDisplay] = useState(0)
-  const ref = useRef(null)
-
-  useEffect(() => {
-    const target = typeof value === 'number' ? value : parseFloat(String(value).replace(/[^\d.-]/g, '')) || 0
-    const start = performance.now()
-
-    function tick(now) {
-      const elapsed = now - start
-      const progress = Math.min(elapsed / duration, 1)
-      // Ease-out cubic — starts fast, decelerates
-      const eased = 1 - Math.pow(1 - progress, 3)
-      setDisplay(eased * target)
-      if (progress < 1) ref.current = requestAnimationFrame(tick)
-    }
-
-    ref.current = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(ref.current)
-  }, [value, duration])
-
+function ResultsSkeleton() {
   return (
-    <span className={color}>
-      {prefix}{display.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{suffix}
-    </span>
+    <div aria-busy="true" aria-label="Carregando operações" className="flex flex-col gap-3">
+      <div className="h-36 rounded-panel bg-card motion-safe:animate-pulse" />
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="h-28 rounded-panel bg-card motion-safe:animate-pulse" />
+        ))}
+      </div>
+      <div className="h-80 rounded-panel bg-card motion-safe:animate-pulse" />
+    </div>
   )
 }
 
-function ResultsHero({ stats }) {
-  const [visible, setVisible] = useState(false)
-  useEffect(() => { const t = setTimeout(() => setVisible(true), 100); return () => clearTimeout(t) }, [])
-
-  const isPositive = stats.totalProfit >= 0
-
+// Um destaque por página, na tinta: o lucro total.
+function TotalCard({ stats }) {
   return (
-    <div className="relative overflow-hidden rounded-xl md:rounded-3xl p-4 md:p-10 mb-3 md:mb-6">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#00ff87]/[0.04] via-[#060608] to-[#3b82f6]/[0.02]" />
-      <div className="absolute top-0 right-0 w-28 h-28 md:w-80 md:h-80 opacity-[0.03]">
-        <CandlestickChart className="w-full h-full text-[#00ff87]" strokeWidth={0.5} />
-      </div>
-
-      <div className="relative">
-        <div
-          className="transition-all duration-1000"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)' }}
-        >
-          <div className="flex items-center gap-1.5 mb-2 md:mb-4">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#00ff87] animate-pulse" />
-            <span className="text-white/20 text-[8px] md:text-[11px] font-semibold uppercase tracking-[0.15em] md:tracking-[0.2em]">Performance em tempo real</span>
-          </div>
-
-          <h1 className="text-xl md:text-5xl font-black text-white tracking-tight mb-3 md:mb-6">
-            Resultados
-          </h1>
-
-          <div className="flex flex-col md:flex-row md:items-end gap-3 md:gap-10">
-            {/* Main result */}
-            <div>
-              <span className="text-white/20 text-[8px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-semibold block mb-0.5">Lucro total</span>
-              <div className="text-2xl md:text-6xl font-black tracking-tight">
-                <AnimatedNumber
-                  value={stats.totalProfit}
-                  prefix="R$ "
-                  color={isPositive ? 'text-[#00ff87]' : 'text-[#ff4757]'}
-                  duration={2500}
-                />
-              </div>
-            </div>
-
-            {/* Secondary stats */}
-            <div className="flex gap-4 md:gap-8 md:mb-2">
-              <div>
-                <span className="text-white/20 text-[7px] md:text-[10px] uppercase tracking-wider block mb-0.5">Operações</span>
-                <span className="text-white font-black text-base md:text-2xl">{stats.totalTrades}</span>
-              </div>
-              <div>
-                <span className="text-white/20 text-[7px] md:text-[10px] uppercase tracking-wider block mb-0.5">Win Rate</span>
-                <span className={`font-black text-base md:text-2xl ${stats.winRate >= 50 ? 'text-[#00ff87]' : 'text-[#ff4757]'}`}>{stats.winRate}%</span>
-              </div>
-              <div>
-                <span className="text-white/20 text-[7px] md:text-[10px] uppercase tracking-wider block mb-0.5">Fator de Lucro</span>
-                <span className={`font-black text-base md:text-2xl ${stats.profitFactor >= 1 ? 'text-[#00ff87]' : 'text-[#ff4757]'}`}>{stats.profitFactor}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <section className="rounded-panel bg-foreground p-5 text-background md:p-6">
+      <p className="text-footnote opacity-75">Lucro total</p>
+      <p className="mt-1 text-large-title font-bold tabular-nums">{brl(stats.totalProfit)}</p>
+      {stats.firstDate && (
+        <p className="mt-2 text-footnote tabular-nums opacity-75">
+          De {dateBR(stats.firstDate)} a {dateBR(stats.lastDate)}
+        </p>
+      )}
+    </section>
   )
 }
 
@@ -106,37 +44,24 @@ function DashboardPage() {
   const { trades, equityCurve, stats, filters, setFilters, loading } = useTrades()
 
   return (
-    <main className="p-2.5 md:p-6 flex flex-col gap-2.5 md:gap-5">
+    <main className="fade-in mx-auto flex max-w-6xl flex-col gap-3 px-4 pb-16 pt-6 md:gap-4 md:px-8 md:pt-10">
+      <div className="mb-2">
+        <h1 className="text-large-title font-bold">Resultados</h1>
+        <p className="mt-1 text-subhead text-muted">
+          Alaska & Square no mini índice, com 16 contratos por operação: 4 no Alaska e 12 no Square.
+        </p>
+      </div>
+
+      <Filters filters={filters} setFilters={setFilters} />
+
       {loading ? (
-        <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-          <div className="relative">
-            <div className="w-12 h-12 rounded-2xl bg-[#00ff87]/10 flex items-center justify-center">
-              <Loader2 className="w-5 h-5 text-[#00ff87] animate-spin" />
-            </div>
-          </div>
-          <span className="text-white/20 text-sm font-medium">Carregando operações...</span>
-        </div>
+        <ResultsSkeleton />
       ) : (
         <>
-          {/* Observação sobre contratos */}
-          <div className="flex items-center justify-center gap-1.5 relative group cursor-default">
-            <Info className="w-3 h-3 md:w-3.5 md:h-3.5 text-white/20" />
-            <span className="text-white/25 text-[10px] md:text-[11px] font-medium">
-              Valores realizados com <span className="text-white/40 font-semibold">16 contratos</span>
-            </span>
-            {/* Tooltip */}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-[#0c0c10]/95 backdrop-blur-xl border border-white/[0.06] rounded-xl px-3.5 py-2.5 md:px-4 md:py-3 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-20 shadow-2xl">
-              <p className="text-white/50 text-[10px] md:text-[11px] leading-relaxed text-center">
-                4 contratos no <span className="text-[#00ff87] font-semibold">Alaska</span> e 12 no <span className="text-[#3b82f6] font-semibold">Square</span>
-              </p>
-            </div>
-          </div>
-
-          <ResultsHero stats={stats} />
+          <TotalCard stats={stats} />
           <StatsCards stats={stats} />
-          <Filters filters={filters} setFilters={setFilters} />
           <EquityChart data={equityCurve} />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-5">
+          <div className="grid grid-cols-1 gap-3 md:gap-4 lg:grid-cols-2">
             <YearlyChart trades={trades} />
             <MonthlyChart trades={trades} />
           </div>
@@ -147,23 +72,31 @@ function DashboardPage() {
   )
 }
 
+// Tela nova abre no topo.
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#060608] text-white">
-        <div className="max-w-7xl mx-auto">
-          <Header />
+      <ScrollToTop />
+      <div className="min-h-screen bg-background text-foreground">
+        <Header />
 
-          <Routes>
-            <Route path="/" element={<StrategyPage />} />
-            <Route path="/resultados" element={<DashboardPage />} />
-          </Routes>
+        <Routes>
+          <Route path="/" element={<StrategyPage />} />
+          <Route path="/resultados" element={<DashboardPage />} />
+        </Routes>
 
-          <footer className="flex flex-col items-center py-6 md:py-8 border-t border-white/[0.03]">
-            <img src="/logo.png" alt="Fabrício Gonçalvez" className="h-10 md:h-12 w-auto opacity-20 mb-2" />
-            <span className="text-white/10 text-[10px] md:text-[11px] font-medium tracking-wider">&copy; {new Date().getFullYear()}</span>
-          </footer>
-        </div>
+        <footer className="mx-auto flex max-w-6xl items-center justify-between gap-4 border-t border-border px-4 py-6 md:px-8">
+          <span className="text-footnote text-muted">© {new Date().getFullYear()} Fabrício Gonçalvez</span>
+          <img src="/logo.png" alt="" className="h-8 w-8" />
+        </footer>
       </div>
     </BrowserRouter>
   )

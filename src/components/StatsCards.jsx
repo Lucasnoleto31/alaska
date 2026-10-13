@@ -1,66 +1,68 @@
-import { TrendingUp, TrendingDown, BarChart3, Target, Activity, Zap } from 'lucide-react'
+import { useId, useState } from 'react'
+import { brl, brlCompact, decimal, int, pct } from '../lib/format'
 
-function StatCard({ label, value, icon: Icon, iconColor }) {
+// "?" só no jargão: abre uma frase embaixo do número.
+function Hint({ text }) {
+  const [open, setOpen] = useState(false)
+  const id = useId()
   return (
-    <div className="relative overflow-hidden bg-white/[0.02] backdrop-blur border border-white/[0.04] rounded-xl md:rounded-2xl p-3 md:p-5 flex flex-col gap-2 md:gap-4 hover:border-[#00ff87]/20 transition-all duration-300 group">
-      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#00ff87]/[0.03] to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity" />
-      <div className="flex items-center justify-between relative">
-        <span className="text-white/30 text-[8px] md:text-[11px] font-semibold uppercase tracking-[0.1em] md:tracking-[0.15em]">{label}</span>
-        <Icon className={`w-3 h-3 md:w-4 md:h-4 ${iconColor}`} />
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls={id}
+        aria-label="O que é"
+        className="absolute right-3 top-3 inline-flex h-6 w-6 items-center justify-center rounded-full border border-border text-caption-2 font-semibold text-muted before:absolute before:-inset-2.5 before:content-[''] hover:text-foreground"
+      >
+        ?
+      </button>
+      {open && (
+        <span id={id} role="note" className="mt-2 block text-footnote text-muted">
+          {text}
+        </span>
+      )}
+    </>
+  )
+}
+
+function StatCard({ label, hint, value, support }) {
+  return (
+    <div className="panel relative row-span-3 grid grid-rows-subgrid gap-1 p-4 md:p-5">
+      <div className={`text-footnote text-muted ${hint ? 'pr-7' : ''}`}>
+        {label}
+        {hint && <Hint text={hint} />}
       </div>
-      <div className="text-[15px] md:text-[22px] font-bold tracking-tight relative">{value}</div>
+      <div className="text-title-3 font-bold tabular-nums md:text-title-2">{value}</div>
+      <div className="self-end text-footnote text-muted tabular-nums">{support}</div>
     </div>
   )
 }
 
 export default function StatsCards({ stats }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-1.5 md:gap-3">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       <StatCard
-        label="Total de Operações"
-        value={<span className="text-white">{stats.totalTrades}</span>}
-        icon={BarChart3}
-        iconColor="text-[#00ff87]/60"
+        label="Operações"
+        value={int(stats.totalTrades)}
+        support={`${brl(stats.avgTrade)} por operação`}
       />
       <StatCard
-        label="Lucro Total"
-        value={
-          <span className={stats.totalProfit >= 0 ? 'text-[#00ff87]' : 'text-[#ff4757]'}>
-            R$ {stats.totalProfit.toLocaleString('pt-BR')}
-          </span>
-        }
-        icon={stats.totalProfit >= 0 ? TrendingUp : TrendingDown}
-        iconColor={stats.totalProfit >= 0 ? 'text-[#00ff87]/60' : 'text-[#ff4757]/60'}
+        label="Taxa de acerto"
+        value={pct(stats.winRate)}
+        support={`${int(stats.wins)} de ${int(stats.totalTrades)}`}
       />
       <StatCard
-        label="Taxa de Acerto"
-        value={<span className={stats.winRate >= 50 ? 'text-[#00ff87]' : 'text-[#ff4757]'}>{stats.winRate}%</span>}
-        icon={Target}
-        iconColor="text-[#00ff87]/60"
+        label="Fator de lucro"
+        hint="Soma dos ganhos dividida pela soma das perdas. Acima de 1, o ganho cobre a perda."
+        value={decimal(stats.profitFactor)}
+        support={`${brlCompact(stats.grossProfit)} contra ${brlCompact(stats.grossLoss)}`}
       />
       <StatCard
-        label="Vitórias / Derrotas"
-        value={
-          <span>
-            <span className="text-[#00ff87]">{stats.wins}</span>
-            <span className="text-white/15 mx-1">/</span>
-            <span className="text-[#ff4757]">{stats.losses}</span>
-          </span>
-        }
-        icon={stats.wins >= stats.losses ? TrendingUp : TrendingDown}
-        iconColor="text-white/20"
-      />
-      <StatCard
-        label="Max Drawdown"
-        value={<span className="text-[#ff4757]">R$ {stats.maxDrawdown.toLocaleString('pt-BR')}</span>}
-        icon={Activity}
-        iconColor="text-[#ff4757]/60"
-      />
-      <StatCard
-        label="Fator de Lucro"
-        value={<span className={stats.profitFactor >= 1 ? 'text-[#00ff87]' : 'text-[#ff4757]'}>{stats.profitFactor}</span>}
-        icon={Zap}
-        iconColor="text-[#00ff87]/60"
+        label="Drawdown máximo"
+        hint="Maior distância entre um topo da curva de capital e o fundo seguinte."
+        value={brl(stats.maxDrawdown)}
+        support={`${int(stats.losses)} operações com prejuízo`}
       />
     </div>
   )
